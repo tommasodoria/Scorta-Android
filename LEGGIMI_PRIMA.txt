@@ -1,0 +1,61 @@
+SCORTA ANDROID — PROGETTO INSTALLABILE (sorgenti Android Studio)
+====================================================================
+
+CHE COS'E'
+Questa cartella e' un progetto Android reale (Java + WebView offline).
+L'app installata ha una propria icona sul telefono, nessun account e nessun
+collegamento a Internet. Il catalogo, i movimenti, le vendite e il riepilogo
+contanti/POS sono incorporati nell'app e continuano a funzionare offline.
+L'interfaccia rimane quella di Scorta, all'interno dell'app Android.
+
+IMPORTANTE: IN QUESTA ZIP NON C'E' UN APK GIA' COMPILATO.
+Questo ambiente non dispone di Android SDK/Gradle per compilare e firmare
+un file APK. Per ottenere un APK, esegui una delle due procedure qui sotto.
+
+METODO 1 — ANDROID STUDIO (PC Windows/Mac/Linux)
+1. Installa Android Studio e l'Android SDK 35 (Android 15).
+2. Estrai il file .zip.
+3. Android Studio > Open > seleziona la cartella Scorta_Android_Studio.
+4. Permetti la sincronizzazione Gradle (AGP 8.6.1, JDK 17, Gradle 8.7).
+   Se manca Gradle, Android Studio puo' installarlo oppure configura Gradle 8.7.
+5. Menu Build > Build Bundle(s) / APK(s) > Build APK(s).
+6. Trova l'APK in app/build/outputs/apk/debug/app-debug.apk.
+7. Copia l'APK su Android e autorizza, quando richiesto, l'installazione
+   delle app da questa sorgente (solo per il file che hai appena compilato).
+
+METODO 2 — GITHUB ACTIONS (ANCHE SENZA ANDROID STUDIO)
+1. Crea un repository GitHub, carica TUTTO il contenuto della cartella
+   Scorta_Android_Studio nella radice del repository.
+2. Apri GitHub > Actions > 'Compila APK Android' > Run workflow.
+   Il workflow esegue Gradle e genera app-debug.apk.
+3. Scarica l'artifact 'Scorta-Android-APK' al termine della compilazione.
+4. Estrai e installa app-debug.apk sul telefono.
+
+I FILE ZIP PUBBLICATI NON INSTALLANO DA SOLI L'APP. SERVE L'APK COMPILATO.
+
+DATI E BACKUP
+- I dati sono salvati nello spazio privato dell'app Android tramite localStorage
+  (separati da Chrome e dalle versioni web).
+- Se sul telefono avevi Scorta in Chrome/HTML, PRIMA di cambiare versione
+  esporta il backup JSON dalla versione vecchia.
+- Nella nuova app Android apri Dati e Backup > Importa JSON per recuperarli.
+- Il file JSON non viene importato automaticamente: dovrai selezionarlo.
+- Fai backup JSON regolari, specialmente dopo la chiusura della giornata.
+- La cancellazione dati dell'app, la sua disinstallazione o il ripristino del
+  dispositivo possono eliminare definitivamente l'inventario locale.
+- Se installi l'app su due telefoni, i dati NON si sincronizzano.
+
+FUNZIONI ANDROID
+- Stampa inventario, listino o giornata tramite la finestra stampa Android:
+  scegli una stampante o 'Salva come PDF'.
+- Backup JSON e esportazione CSV salvati con il selettore file Android.
+- Importazione JSON/CSV con il selettore file Android.
+- Nessun permesso Internet e nessun servizio cloud.
+
+LIMITI
+- Interfaccia HTML/CSS/JS incorporata in un contenitore Android nativo:
+  e' un'app APK vera, ma NON e' una riscrittura dell'interfaccia in Kotlin.
+- Test automatici sul codice e gli asset effettuati, ma la build APK e la
+  stampa su uno smartphone reale richiedono la compilazione e una prova.
+- La gestione vendite e' gestionale; non sostituisce il registratore
+  telematico, i documenti commerciali o gli adempimenti fiscali.

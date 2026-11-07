@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101b31">
+  <meta name="description" content="Scorta: inventario, vendite giornaliere, contanti e POS, listino prezzi, stampa e backup.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <title>Scorta — Inventario e vendite</title>
+  <style>
+    :root{--bg:#f5f7fb;--surface:#fff;--ink:#17223a;--muted:#69758a;--line:#e8edf3;--accent:#2763ec;--accent-dark:#194dca;--accent-light:#edf3ff;--nav:#101b31;--nav-text:#a7b4ca;--mint:#16a37c;--mint-bg:#e6f7f0;--warn:#b87813;--warn-bg:#fff5df;--danger:#cb4a50;--danger-bg:#fff0f1;--radius:16px;--shadow:0 14px 38px rgba(24,35,62,.055);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}a{color:inherit;text-decoration:none}svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}*:focus-visible{outline:3px solid #95b7ff;outline-offset:2px}
+    .layout{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh}.sidebar{background:var(--nav);color:#fff;padding:30px 18px 20px;display:flex;flex-direction:column;gap:29px;position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:12px;padding:0 11px}.brand-mark{height:39px;width:39px;border-radius:13px;background:linear-gradient(135deg,#5e8af8,#2460e7);display:grid;place-items:center;box-shadow:0 8px 21px #15366f70}.brand-mark svg{width:24px;height:24px}.brand-title{font-size:21px;font-weight:760;letter-spacing:-.7px}.brand-subtitle{font-size:11px;color:#8fa0bd;letter-spacing:.13em;text-transform:uppercase;margin-top:2px}.nav-label{font-size:10px;letter-spacing:.17em;color:#7083a3;font-weight:750;padding:0 13px;margin-bottom:12px}.nav-links{display:flex;flex-direction:column;gap:6px}.nav-item{display:flex;align-items:center;gap:13px;border:0;background:none;color:var(--nav-text);border-radius:11px;padding:12px 13px;width:100%;text-align:left;font-size:14px;font-weight:590}.nav-item:hover{background:#1b2943;color:#fff}.nav-item.active{background:#28467e;color:#fff}.nav-item svg{width:19px;height:19px}.nav-footer{margin-top:auto;background:#1a2943;border:1px solid #2c405c;padding:17px;border-radius:14px}.nav-footer .caption{color:#92a2be;font-size:12px;line-height:1.55;margin-top:6px}.nav-footer strong{font-size:13px}.nav-footer svg{color:#71a0ff;width:23px;height:23px;margin-bottom:9px}
+    .main{min-width:0;padding:30px clamp(20px,3.8vw,57px) 65px;max-width:1600px;width:100%;margin-inline:auto}.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:29px}.eyebrow{text-transform:uppercase;color:#768399;letter-spacing:.12em;font-weight:760;font-size:11px;margin-bottom:9px}.page-title{font-size:clamp(25px,2.55vw,34px);line-height:1.18;font-weight:780;letter-spacing:-1.2px;margin:0}.page-desc{font-size:14px;color:var(--muted);margin-top:10px}.topbar-actions{display:flex;gap:9px;align-items:center}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:11px 15px;border-radius:11px;border:1px solid transparent;font-size:13px;font-weight:700;white-space:nowrap;transition:background .14s,transform .12s;min-height:42px}.btn:hover{transform:translateY(-1px)}.btn svg{width:17px;height:17px}.btn-primary{background:var(--accent);color:#fff;box-shadow:0 7px 16px #2763ec1e}.btn-primary:hover{background:var(--accent-dark)}.btn-white{background:#fff;border-color:#e1e7f0;color:#35415a}.btn-white:hover{background:#f8faff}.btn-ghost{background:transparent;color:var(--muted)}.btn-danger{background:#fff1f2;color:#b32a37;border-color:#ffd5d8}.btn-sm{padding:7px 10px;min-height:33px;font-size:12px}.btn-icon{padding:9px;min-width:39px;min-height:39px}.btn-icon svg{width:17px;height:17px}.btn-link{background:none;border:0;color:var(--accent);font-weight:730;font-size:13px;display:inline-flex;align-items:center;gap:4px;padding:5px}.btn-link svg{width:14px;height:14px}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px;margin-bottom:24px}.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;min-height:149px;box-shadow:var(--shadow)}.stat-top{display:flex;justify-content:space-between;align-items:center;gap:9px}.stat-label{font-size:12px;color:var(--muted);font-weight:650}.stat-icon{width:37px;height:37px;border-radius:11px;background:#eef3ff;color:#376deb;display:grid;place-items:center}.stat-icon svg{width:19px;height:19px}.stat-icon.green{color:#12966e;background:#eaf8f2}.stat-icon.amber{color:#a8781a;background:#fff5e0}.stat-icon.violet{color:#8756ca;background:#f4edff}.stat-value{margin-top:12px;font-size:clamp(25px,2.6vw,34px);letter-spacing:-1.1px;font-weight:780;line-height:1.1}.stat-hint{font-size:12px;margin-top:9px;color:#8b96a9}.stat-hint.danger{color:var(--danger)}
+    .section-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(295px,.9fr);gap:20px}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 22px 18px}.card-title{margin:0;font-size:16px;font-weight:750;letter-spacing:-.35px}.card-subtitle{font-size:12px;color:var(--muted);margin-top:5px}.card-body{padding:0 22px 22px}.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:100px;font-size:11px;font-weight:730;white-space:nowrap}.pill-ok{background:var(--mint-bg);color:#127d60}.pill-low{background:var(--warn-bg);color:#9e6810}.pill-out{background:var(--danger-bg);color:#b63a42}.pill-neutral{background:#f0f3f8;color:#5e6e88}.dot{width:7px;height:7px;background:currentColor;border-radius:50%;display:inline-block}
+    .stock-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-top:1px solid #f0f2f6}.stock-name{font-size:13px;font-weight:690}.stock-meta{font-size:12px;color:var(--muted);margin-top:3px}.stock-right{text-align:right;flex-shrink:0}.stock-count{font-size:14px;font-weight:780;margin-bottom:4px}.timeline-item{display:flex;gap:11px;padding:13px 0;border-top:1px solid #f0f2f6}.timeline-icon{width:34px;height:34px;border-radius:10px;background:#e8f8f1;color:#189975;display:grid;place-items:center;flex-shrink:0}.timeline-icon.out{background:#fff2ef;color:#ce6d48}.timeline-icon.fix{background:#edf2ff;color:#3b67ca}.timeline-icon svg{width:16px;height:16px}.timeline-main{min-width:0;flex:1}.timeline-title{font-size:12.5px;font-weight:690;line-height:1.5}.timeline-meta{font-size:11.5px;color:#8995a8;margin-top:2px}.timeline-qty{font-size:13px;font-weight:730;white-space:nowrap}.mini-empty{padding:25px 10px;text-align:center;color:#8390a5;font-size:13px;line-height:1.65}.mini-empty svg{width:30px;height:30px;color:#a8b5c8;display:block;margin:0 auto 8px}
+    .content-section{display:none}.content-section.active{display:block}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:18px}.search{display:flex;align-items:center;gap:9px;flex:1;min-width:220px;background:#fff;border:1px solid #e0e7f1;border-radius:11px;padding:0 13px;height:43px}.search svg{height:17px;width:17px;color:#8b96aa}.search input{width:100%;border:0;outline:0;background:transparent;color:var(--ink);font-size:13px}.search input::placeholder{color:#9aa5b7}.control{border:1px solid #e0e7f1;background:#fff;border-radius:11px;height:43px;padding:0 13px;color:#45546c;min-width:135px;font-size:13px}.table-wrap{width:100%;overflow-x:auto}.data-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.065em;color:#7e8ba0;font-weight:780;padding:15px 17px;background:#fafbfe;border-bottom:1px solid var(--line);white-space:nowrap}.data-table td{padding:15px 17px;border-bottom:1px solid #eef1f5;vertical-align:middle}.data-table tr:last-child td{border-bottom:0}.data-table tbody tr:hover{background:#fcfdff}.product-name{font-weight:720;color:#263450}.product-sku{font-size:11px;color:#8893a6;margin-top:4px}.category-tag{background:#f1f4fa;color:#586985;border-radius:7px;padding:6px 9px;font-size:11px;font-weight:650;display:inline-block;white-space:nowrap}.qty-number{font-size:14px;font-weight:740}.text-muted{color:#8793a7}.actions{display:flex;align-items:center;justify-content:flex-end;gap:6px}.table-footer{padding:14px 18px;border-top:1px solid var(--line);color:#8590a4;font-size:12px;display:flex;justify-content:space-between}.empty{padding:55px 20px;text-align:center}.empty-illustration{height:65px;width:65px;border-radius:20px;background:#edf3ff;color:#4779e9;display:grid;place-items:center;margin:0 auto 16px}.empty-illustration svg{height:32px;width:32px}.empty-title{font-size:17px;font-weight:750}.empty-description{font-size:13px;color:var(--muted);margin:8px auto 18px;max-width:400px;line-height:1.6}
+    .data-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px}.setting-card{padding:25px;display:flex;flex-direction:column;gap:11px}.setting-icon{background:#eff4ff;color:#3b6de2;height:43px;width:43px;border-radius:13px;display:grid;place-items:center}.setting-card h3{font-size:16px;margin:3px 0 0}.setting-card p{font-size:13px;line-height:1.65;color:var(--muted);margin:0 0 9px}.setting-card .btn{align-self:flex-start}.note{font-size:12px;color:#8c98a8;line-height:1.6}.info-box{background:#f0f5ff;border:1px solid #dce8ff;border-radius:12px;padding:15px;color:#4c6184;font-size:13px;line-height:1.6}.info-box strong{color:#214e9f}.warn-box{background:#fff7e8;border-color:#f7e4b8}
+    .dialog-backdrop{position:fixed;inset:0;background:#0c1732a3;display:none;z-index:80;padding:22px;align-items:center;justify-content:center;backdrop-filter:blur(3px)}.dialog-backdrop.open{display:flex}.dialog{width:100%;max-width:650px;background:#fff;border-radius:19px;box-shadow:0 25px 75px #07102460;max-height:min(92vh,950px);display:flex;flex-direction:column;overflow:hidden}.dialog.small{max-width:490px}.dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:24px 25px 17px;border-bottom:1px solid var(--line)}.dialog-title{font-size:19px;font-weight:780;letter-spacing:-.55px}.dialog-subtitle{margin-top:5px;color:#7d8a9d;font-size:12px}.dialog-body{overflow-y:auto;padding:23px 25px;min-height:0}.dialog-footer{border-top:1px solid var(--line);padding:16px 25px;display:flex;justify-content:flex-end;gap:9px;background:#fff}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px 15px}.form-field{display:flex;flex-direction:column;gap:7px;min-width:0}.form-field.full{grid-column:1/-1}.form-field label{font-size:12px;font-weight:730;color:#40506b}.form-field input,.form-field select,.form-field textarea{width:100%;background:#fff;border:1px solid #dfe5ef;border-radius:10px;padding:11px 12px;font-size:13px;min-height:43px;color:#22324d;outline:0}.form-field textarea{resize:vertical;min-height:80px}.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:#6594f5;box-shadow:0 0 0 3px #e9f1ff}.field-hint{font-size:11px;color:#93a0b2;line-height:1.5}.required{color:#ca4e57}.radio-card-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:21px}.radio-card{display:flex;justify-content:center;align-items:center;gap:6px;border:1px solid #dfe6f0;border-radius:10px;padding:12px 7px;font-size:12px;font-weight:700;cursor:pointer;color:#71809a}.radio-card:has(input:checked){border-color:#5481e9;background:#f0f5ff;color:#245cd6}.radio-card input{accent-color:#3068df}.movement-product-note{background:#f7f9fe;border-radius:10px;color:#6d7e98;padding:11px 13px;font-size:12px;line-height:1.6;margin-bottom:18px}.movement-product-note strong{color:#203552}.movement-footer #m-delete{margin-right:auto}.movement-edited{font-size:10px;color:#8a95ab;font-weight:600;margin-top:4px}.mobile-nav{display:none}.toast{position:fixed;right:23px;bottom:24px;background:#152440;color:#fff;box-shadow:0 10px 28px #0b183a40;z-index:120;border-radius:11px;padding:13px 17px;font-size:13px;display:none;max-width:370px;line-height:1.45}.toast.show{display:block}.toast.error{background:#a12d3f}.section-kicker{margin-top:2px;font-size:12px;color:#8593a8}.top-margin{margin-top:22px}.desktop-hide{display:none}.hidden{display:none!important}.csv-hint{font-size:12px;line-height:1.65;color:var(--muted);margin-top:11px}
+
+    .print-dialog{max-width:680px}.print-search{width:100%;margin-bottom:12px}.print-select-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}.print-select-actions>span{font-size:12px;font-weight:750;color:#465773}.print-select-buttons{display:flex;gap:6px;flex-wrap:wrap}.print-picker{border:1px solid #e1e7f0;border-radius:12px;overflow:auto;max-height:290px}.print-option{display:flex;gap:12px;align-items:center;padding:11px 13px;border-bottom:1px solid #eef1f5;cursor:pointer}.print-option:last-child{border-bottom:0}.print-option:hover{background:#f7faff}.print-option input{width:18px;height:18px;flex:none;accent-color:#2763ec}.print-option-content{flex:1;min-width:0}.print-option-name{font-size:13px;font-weight:700}.print-option-meta{font-size:11px;color:#8591a5;margin-top:3px}.print-option-price{font-size:13px;font-weight:760;white-space:nowrap}.print-option-empty{padding:30px;text-align:center;color:#8591a5;font-size:13px}#print-sheet{display:none}
+    @media print{
+      @page{size:A4 portrait;margin:16mm}
+      body.print-ready{background:#fff!important;color:#182338!important}
+      body.print-ready .layout,body.print-ready .mobile-nav,body.print-ready .dialog-backdrop,body.print-ready .toast{display:none!important}
+      body.print-ready #print-sheet{display:block!important;font-family:Arial,sans-serif;font-size:11pt;color:#17223a}
+      body.print-ready .print-document-header{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:2px solid #17223a;padding:0 0 16px;margin-bottom:20px}
+      body.print-ready .print-document-header h1{font-size:24pt;line-height:1.1;margin:0 0 7px}
+      body.print-ready .print-document-header p{font-size:10pt;color:#64748b;margin:0}
+      body.print-ready .print-document-date{font-size:10pt;color:#64748b;white-space:nowrap}
+      body.print-ready .print-document-table{width:100%;border-collapse:collapse;table-layout:auto}
+      body.print-ready .print-document-table th{background:#eaf0f8;text-align:left;font-size:9pt;text-transform:uppercase;letter-spacing:.03em;padding:10px;border-bottom:1px solid #bac6d8}
+      body.print-ready .print-document-table td{font-size:10pt;padding:10px;border-bottom:1px solid #e1e7ef;vertical-align:top}
+      body.print-ready .print-document-table th:last-child,body.print-ready .print-document-table td:last-child{text-align:right;white-space:nowrap}
+      body.print-ready .print-document-table tr{break-inside:avoid}
+      body.print-ready .print-product-secondary{color:#7b8799;font-size:8pt;margin-top:4px}
+      body.print-ready .print-document-footer{margin-top:22px;font-size:9pt;color:#64748b}
+      body.print-ready .print-document-table thead{display:table-header-group}
+    }
+    @media(max-width:1180px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.section-grid{grid-template-columns:1fr}.stat{min-height:135px}}
+    @media(max-width:760px){.layout{display:block}.sidebar{display:none}.main{padding:22px 15px 105px}.topbar{align-items:flex-start;flex-wrap:wrap;margin-bottom:20px}.topbar-actions{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px}.topbar-actions .btn{min-width:0;white-space:normal;font-size:12px;padding:10px 8px}.topbar-actions #header-sale{grid-column:1/-1}.eyebrow{font-size:10px}.page-desc{font-size:12px;line-height:1.5;margin-top:6px}.page-title{font-size:28px}.stats{gap:10px;margin-bottom:16px}.stat{padding:15px;min-height:128px}.stat-value{font-size:26px}.stat-icon{height:32px;width:32px}.stat-label{font-size:11px}.stat-hint{font-size:10px;line-height:1.35}.section-grid{gap:13px}.card-header{padding:18px 15px 14px}.card-body{padding:0 15px 17px}.card-title{font-size:15px}.stock-name{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toolbar{gap:8px}.search{flex-basis:100%}.control{flex:1;min-width:0;max-width:50%}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));bottom:0;left:0;right:0;padding:7px 5px calc(7px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e7edf5;z-index:40;box-shadow:0 -9px 26px #1929470c}.mobile-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:0;background:transparent;color:#8795aa;border-radius:9px;padding:6px 2px;font-size:10px;font-weight:760}.mobile-nav button.active{color:#2361e5;background:#edf3ff}.mobile-nav svg{height:21px;width:21px}.data-table{min-width:700px}.data-layout{grid-template-columns:1fr;gap:13px}.setting-card{padding:20px}.dialog-backdrop{padding:0;align-items:flex-end}.dialog{border-radius:18px 18px 0 0;max-height:94dvh}.dialog-head{padding:20px 18px 15px}.dialog-body{padding:19px 18px}.dialog-footer{padding:13px 18px calc(14px + env(safe-area-inset-bottom))}.form-grid{gap:13px 10px}.form-field input,.form-field select{font-size:16px}.radio-card{font-size:11px}.toast{left:15px;right:15px;bottom:88px;max-width:unset}}
+    @media(max-width:760px){.print-dialog{max-height:94dvh}.print-picker{max-height:36dvh}.print-select-buttons{width:100%}.print-select-buttons .btn{flex:1}}
+    @media(max-width:370px){.form-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stat-value{font-size:23px}.radio-card-row{gap:5px}.radio-card{padding:10px 3px}}
+
+
+    /* Vendite e chiusura giornaliera */
+    .today-sale-panel{display:flex;align-items:center;gap:24px;flex-wrap:wrap;background:linear-gradient(110deg,#142945,#233f69);color:#fff;border-radius:16px;padding:21px 24px;margin-bottom:22px;box-shadow:0 12px 28px #152b4420}.today-sale-kicker{font-size:10px;letter-spacing:.13em;font-weight:800;color:#9ab8e2}.today-sale-number{font-size:29px;line-height:1.1;font-weight:820;letter-spacing:-.7px;margin-top:7px}.today-sale-caption{font-size:12px;color:#aabed9;margin-top:6px}.today-sale-breakdown{display:flex;gap:22px;flex:1;flex-wrap:wrap;margin-left:auto}.today-sale-breakdown span{display:flex;flex-direction:column;gap:6px;font-size:11px;color:#abc0dd}.today-sale-breakdown strong{font-size:17px;color:#fff}.today-sale-panel .btn{border-color:#617ba1;color:#eaf2ff;background:#314e76}
+    .sales-toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:19px}.sales-toolbar .form-field{width:200px}.sales-toolbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sales-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px}.sale-stat{background:#fff;border:1px solid var(--line);border-radius:15px;padding:21px 20px;display:flex;flex-direction:column;gap:9px}.sale-stat-main{border-color:#ccdafb;background:#f1f5ff}.sale-stat-name{color:#70819a;font-size:12px;font-weight:730}.sale-stat strong{font-size:clamp(23px,2.4vw,32px);font-weight:820;letter-spacing:-.6px;color:#20365e}.sale-stat span{font-size:11px;color:#8190a6}.sales-card{margin-bottom:19px}.sales-empty{display:none;padding:27px;text-align:center;font-size:13px;color:#8b98aa}.sales-empty.visible{display:block}.sale-dialog{max-width:810px}.sale-dialog-body{padding-top:18px}.sale-items-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:18px 0 11px}.sale-items-title h3{font-size:15px;margin:0}.sale-lines{display:flex;flex-direction:column;gap:10px}.sale-line{display:grid;grid-template-columns:minmax(160px,2fr) minmax(80px,.8fr) minmax(95px,1fr) minmax(80px,.9fr) auto;gap:9px;align-items:end;background:#f8faff;border:1px solid #e4ebf6;border-radius:12px;padding:13px}.sale-line .form-field label{font-size:10px}.sale-line .form-field input,.sale-line .form-field select{min-width:0}.sale-line-total{font-size:13px;font-weight:750;min-height:43px;display:flex;align-items:center;justify-content:flex-end;white-space:nowrap}.sale-line-stock{font-size:10px;color:#7f8da3;margin-top:3px;line-height:1.4}.sale-line-remove{margin-bottom:2px}.sale-payment-box{background:#f0f5ff;border:1px solid #dce7fa;border-radius:12px;padding:17px;margin-top:17px}.sale-subtotal{display:flex;align-items:center;justify-content:space-between;gap:13px;font-size:14px}.sale-subtotal strong{font-size:25px;color:#224b9a}.sale-pos-readonly{background:#fff;border:1px solid #dfe5ef;min-height:43px;border-radius:10px;padding:12px;font-weight:750;color:#253f65;font-size:13px}
+    @media(max-width:980px){.sale-line{grid-template-columns:minmax(130px,2fr) 90px 100px auto}.sale-line-total{grid-column:3;grid-row:2;justify-content:flex-start;min-height:25px}}
+    @media(max-width:760px){.sales-stats{gap:9px}.sale-stat{padding:13px 11px}.sale-stat strong{font-size:clamp(18px,5vw,26px)}.sale-stat-name{font-size:10px}.sale-stat span{font-size:10px}.sales-toolbar .form-field{flex:1;min-width:170px}.sales-toolbar-actions{width:100%}.sales-toolbar-actions .btn{flex:1}.today-sale-panel{padding:18px;gap:16px}.today-sale-breakdown{flex:1 1 100%}.today-sale-panel .btn{flex:1}.sale-line{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 39px;gap:8px;padding:11px}.sale-line .sale-line-product{grid-column:1/-1}.sale-line .sale-line-qty{grid-column:1}.sale-line .sale-line-price{grid-column:2}.sale-line .sale-line-total{grid-column:1/3;grid-row:auto;min-height:28px;justify-content:flex-start}.sale-line .sale-line-remove{grid-column:3;grid-row:2;align-self:end}.sale-dialog .dialog-footer{flex-wrap:wrap}.sale-dialog .dialog-footer .btn{flex:1}.sale-dialog .dialog-footer #sale-delete:not(.hidden){flex:1 1 100%}#section-sales .data-table{min-width:560px}.mobile-nav{grid-template-columns:repeat(5,minmax(0,1fr))}}
+    @media print{body.print-ready .print-sales-detail{font-size:9pt}body.print-ready .print-sales-detail th{padding:8px 6px;font-size:8pt}body.print-ready .print-sales-detail td{padding:8px 6px;font-size:9pt}body.print-ready .print-sales-detail .print-sale-meta{vertical-align:top;border-left:1px solid #e2e8f0}body.print-ready .print-sales-detail .print-product-secondary{line-height:1.45}body.print-ready .print-sales-detail th:nth-child(4),body.print-ready .print-sales-detail td:nth-child(4){white-space:nowrap}}
+    @media print{body.print-ready .print-payment-summary{margin-top:23px;display:flex;gap:12px;justify-content:space-between;break-inside:avoid}body.print-ready .print-payment-item{flex:1;padding:13px 12px;border:1px solid #cbd5e1;border-radius:6px}body.print-ready .print-payment-label{display:block;font-size:9pt;color:#64748b;margin-bottom:6px}body.print-ready .print-payment-amount{display:block;font-size:16pt;font-weight:800;color:#20365e}body.print-ready .print-section-title{font-size:14pt;margin:26px 0 10px}body.print-ready .print-total-row{background:#eef3fc;font-weight:800}}
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-boxes" viewBox="0 0 24 24"><path d="m3 7 5-3 5 3-5 3-5-3Zm0 0v6l5 3 5-3V7M8 10v6m5-9 4-2 4 2-4 3-4-3Zm0 0v6l4 3 4-3V7m-4 3v6M7 17l5-3 5 3-5 3-5-3Zm0 0v4l5 2 5-2v-4m-5 3v3"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="m3 7 9-4 9 4-9 4-9-4Zm0 0v10l9 4 9-4V7M12 11v10M7.5 5l9 4"/></symbol>
+    <symbol id="i-move" viewBox="0 0 24 24"><path d="M3 7h15m-4-4 4 4-4 4M21 17H6m4-4-4 4 4 4"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="i-warning" viewBox="0 0 24 24"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v5m0 3h.01"/></symbol>
+    <symbol id="i-coins" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 8.5A4 4 0 1 0 15 15.5M7.5 10h7M7.5 14h7"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 20V4m-6 6 6-6 6 6"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 4v16m-6-6 6 6 6-6"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 16-1 5 5-1L20 8a2.12 2.12 0 0 0-4-4L4 16ZM14 6l4 4"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 4h4M6 7l1 14h10l1-14M10 11v6m4-6v6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 18v3h16v-3"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 17V4m-5 5 5-5 5 5M4 17v4h16v-4"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></symbol>
+    <symbol id="i-printer" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 17H4V9h16v8h-2M6 14h12v7H6v-7Z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6m0-9h.01"/></symbol>
+  </svg>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark"><svg><use href="#i-boxes"/></svg></div><div><div class="brand-title">Scorta<span style="color:#72a5ff">.</span></div><div class="brand-subtitle">Inventario e vendite</div></div></div>
+      <div><div class="nav-label">MENU PRINCIPALE</div><nav class="nav-links" aria-label="Navigazione principale">
+        <button class="nav-item active" data-page="dashboard"><svg><use href="#i-grid"/></svg> Panoramica</button>
+        <button class="nav-item" data-page="products"><svg><use href="#i-package"/></svg> Prodotti</button>
+        <button class="nav-item" data-page="sales"><svg><use href="#i-coins"/></svg> Vendite</button>
+        <button class="nav-item" data-page="movements"><svg><use href="#i-move"/></svg> Movimenti</button>
+        <button class="nav-item" data-page="data"><svg><use href="#i-database"/></svg> Dati e backup</button>
+      </nav></div>
+      <div class="nav-footer"><svg><use href="#i-info"/></svg><strong>Inventario sotto controllo</strong><div class="caption">I dati restano salvati in questo browser. Esporta regolarmente un backup.</div></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div><div class="eyebrow" id="page-eyebrow">Il tuo magazzino</div><h1 class="page-title" id="page-title">Panoramica</h1><div class="page-desc" id="page-desc">Tieni sotto controllo prodotti, scorte e movimentazioni.</div></div><div class="topbar-actions"><button class="btn btn-primary" id="header-sale"><svg><use href="#i-coins"/></svg> Nuova vendita</button><button class="btn btn-white" id="header-movement"><svg><use href="#i-move"/></svg> Movimento</button><button class="btn btn-primary" id="header-add"><svg><use href="#i-plus"/></svg> Nuovo prodotto</button></div></header>
+      <section class="content-section active" id="section-dashboard" aria-label="Panoramica">
+        <div class="stats">
+          <div class="stat"><div class="stat-top"><span class="stat-label">Prodotti registrati</span><span class="stat-icon"><svg><use href="#i-package"/></svg></span></div><div class="stat-value" id="stat-products">0</div><div class="stat-hint">Referenze in inventario</div></div>
+          <div class="stat"><div class="stat-top"><span class="stat-label">Unità disponibili</span><span class="stat-icon green"><svg><use href="#i-boxes"/></svg></span></div><div class="stat-value" id="stat-units">0</div><div class="stat-hint">Somma quantità (unità miste)</div></div>
+          <div class="stat"><div class="stat-top"><span class="stat-label">Scorte critiche</span><span class="stat-icon amber"><svg><use href="#i-warning"/></svg></span></div><div class="stat-value" id="stat-low">0</div><div class="stat-hint" id="stat-low-hint">Tutto sotto controllo</div></div>
+          <div class="stat"><div class="stat-top"><span class="stat-label">Valore totale a listino</span><span class="stat-icon violet"><svg><use href="#i-coins"/></svg></span></div><div class="stat-value" id="stat-value">€ 0</div><div class="stat-hint">Quantità × prezzo di vendita</div></div>
+        </div>
+        <div class="today-sale-panel">
+          <div><div class="today-sale-kicker">VENDITE DI OGGI</div><div class="today-sale-number" id="today-revenue">0,00 €</div><div class="today-sale-caption" id="today-sales-count">Nessuna vendita</div></div>
+          <div class="today-sale-breakdown"><span>Contanti <strong id="today-cash">0,00 €</strong></span><span>POS <strong id="today-pos">0,00 €</strong></span></div>
+          <button class="btn btn-white" id="today-sale-open">Apri vendite ${'<svg><use href="#i-chevron"/></svg>'}</button>
+        </div>
+        <div class="section-grid"><article class="card"><div class="card-header"><div><h2 class="card-title">Prodotti da controllare</h2><div class="card-subtitle">Esauriti o vicini alla scorta minima</div></div><button class="btn-link" id="view-low">Vedi prodotti <svg><use href="#i-chevron"/></svg></button></div><div class="card-body" id="dashboard-low"></div></article>
+          <article class="card"><div class="card-header"><div><h2 class="card-title">Attività recenti</h2><div class="card-subtitle">Ultimi movimenti registrati</div></div><button class="btn-link" id="view-movements">Vedi tutti <svg><use href="#i-chevron"/></svg></button></div><div class="card-body" id="dashboard-movements"></div></article></div>
+      </section>
+      <section class="content-section" id="section-products" aria-label="Prodotti">
+        <div class="toolbar"><label class="search"><svg><use href="#i-search"/></svg><input id="product-search" type="search" autocomplete="off" placeholder="Cerca nome, codice, categoria, posizione…" aria-label="Cerca prodotti"></label><select id="product-category" class="control" aria-label="Filtra categoria"><option value="all">Tutte le categorie</option></select><select id="product-status" class="control" aria-label="Filtra disponibilità"><option value="all">Tutte le scorte</option><option value="low">Scorte critiche</option><option value="ok">Disponibili</option></select><select id="product-sort" class="control" aria-label="Ordina prodotti"><option value="name">Nome A–Z</option><option value="qty-asc">Quantità crescente</option><option value="qty-desc">Quantità decrescente</option><option value="value-desc">Prezzo maggiore</option><option value="recent">Ultimi modificati</option></select><button class="btn btn-white" id="print-products"><svg><use href="#i-printer"/></svg> Stampa / Listino</button></div>
+        <article class="card"><div class="table-wrap"><table class="data-table"><thead><tr><th>Prodotto</th><th>Categoria</th><th>Giacenza</th><th>Stato</th><th>Prezzo vendita</th><th style="text-align:right">Azioni</th></tr></thead><tbody id="product-rows"></tbody></table></div><div id="products-empty"></div><div class="table-footer"><span id="products-count">0 prodotti</span><span>Importi in euro (€)</span></div></article>
+      </section>
+
+      <section class="content-section" id="section-sales" aria-label="Vendite e incassi giornalieri">
+        <div class="sales-toolbar">
+          <div class="form-field"><label for="sales-date-filter">Giornata da consultare</label><input type="date" id="sales-date-filter"></div>
+          <div class="sales-toolbar-actions"><button class="btn btn-white" id="sales-today" type="button">Oggi</button><button class="btn btn-white" id="sales-export" type="button">Esporta CSV</button><button class="btn btn-white" id="sales-print" type="button"><svg><use href="#i-printer"/></svg> Stampa giornata</button><button class="btn btn-primary" id="sales-add" type="button"><svg><use href="#i-plus"/></svg> Registra vendita</button></div>
+        </div>
+        <div class="sales-stats">
+          <article class="sale-stat sale-stat-main"><div class="sale-stat-name">Incasso totale</div><strong id="sales-total">0,00 €</strong><span id="sales-operations">0 vendite registrate</span></article>
+          <article class="sale-stat"><div class="sale-stat-name">Contanti</div><strong id="sales-cash">0,00 €</strong><span>Incassati in contanti</span></article>
+          <article class="sale-stat"><div class="sale-stat-name">POS</div><strong id="sales-pos">0,00 €</strong><span>Pagamenti elettronici</span></article>
+        </div>
+        <article class="card sales-card"><div class="card-header"><div><h2 class="card-title">Prodotti venduti</h2><div class="card-subtitle">Quantità, prezzi effettivi e totale per prodotto nella giornata selezionata</div></div></div>
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>Prodotto</th><th>Quantità</th><th>Prezzo unitario</th><th>Totale</th></tr></thead><tbody id="sales-products-rows"></tbody></table></div><div class="sales-empty" id="sales-products-empty"></div>
+        </article>
+        <article class="card sales-card"><div class="card-header"><div><h2 class="card-title">Vendite registrate</h2><div class="card-subtitle">Modifica o elimina una vendita senza perdere il controllo delle giacenze</div></div></div>
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>Ora</th><th>Articoli</th><th>Pagamento</th><th>Totale</th><th style="text-align:right">Azioni</th></tr></thead><tbody id="sales-rows"></tbody></table></div><div class="sales-empty" id="sales-empty"></div><div class="table-footer"><span id="sales-footer-count">0 vendite</span><span>Incassi della giornata selezionata</span></div>
+        </article>
+        <div class="info-box top-margin">Le vendite <strong>scaricano automaticamente il magazzino</strong>. Per correggere un prodotto, una quantità, un prezzo, il pagamento o la data di una vendita, usa il pulsante <strong>Modifica</strong> nella sezione Vendite. Uno scarico manuale non viene conteggiato come vendita.</div>
+      </section>
+      <section class="content-section" id="section-movements" aria-label="Movimenti"><div class="info-box" style="margin-bottom:16px">Puoi modificare <strong>prodotto, tipologia, quantità, data, ora e causale</strong> di ogni movimento. La giacenza viene ricalcolata in ordine cronologico; non sono consentite quantità negative.</div><div class="toolbar"><label class="search"><svg><use href="#i-search"/></svg><input id="movement-search" type="search" placeholder="Cerca prodotto o causale…" aria-label="Cerca movimenti"></label><select id="movement-type" class="control" aria-label="Filtra tipo movimento"><option value="all">Tutti i movimenti</option><option value="in">Carichi</option><option value="out">Scarichi</option><option value="adjustment">Rettifiche</option></select></div><article class="card"><div class="table-wrap"><table class="data-table"><thead><tr><th>Data e ora</th><th>Prodotto</th><th>Tipo</th><th>Variazione</th><th>Giacenza dopo</th><th>Nota</th><th style="text-align:right">Azioni</th></tr></thead><tbody id="movement-rows"></tbody></table></div><div id="movements-empty"></div><div class="table-footer"><span id="movements-count">0 movimenti</span><span>Storico locale</span></div></article></section>
+      <section class="content-section" id="section-data" aria-label="Dati e backup"><div class="data-layout">
+        <article class="card setting-card"><div class="setting-icon"><svg><use href="#i-download"/></svg></div><h3>Esporta inventario CSV</h3><p>Scarica i prodotti in un formato compatibile con Excel e Fogli Google, con quantità, prezzi e categorie.</p><button class="btn btn-white" id="export-csv"><svg><use href="#i-download"/></svg> Scarica CSV</button><div class="note">Per un backup completo, usa invece il formato JSON qui sotto.</div></article>
+        <article class="card setting-card"><div class="setting-icon"><svg><use href="#i-upload"/></svg></div><h3>Importa inventario CSV</h3><p>Carica un file CSV esportato da Scorta o con intestazioni compatibili. L'importazione sostituisce prodotti, movimenti e vendite esistenti.</p><button class="btn btn-white" id="import-csv-button"><svg><use href="#i-upload"/></svg> Seleziona CSV</button><div class="note">Prima di importare, salva un backup JSON dei dati correnti.</div></article>
+        <article class="card setting-card"><div class="setting-icon"><svg><use href="#i-database"/></svg></div><h3>Backup completo</h3><p>Salva prodotti, movimenti, vendite e pagamenti, poi ripristinali su questo o un altro dispositivo.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" id="export-json"><svg><use href="#i-download"/></svg> Salva backup</button><button class="btn btn-white" id="import-json-button"><svg><use href="#i-upload"/></svg> Ripristina</button></div></article>
+        <article class="card setting-card"><div class="setting-icon"><svg><use href="#i-printer"/></svg></div><h3>Stampa e listino prezzi</h3><p>Seleziona soltanto i prodotti desiderati e scegli se stampare il listino prezzi o l’inventario con giacenze.</p><button class="btn btn-white" id="print-inventory"><svg><use href="#i-printer"/></svg> Seleziona e stampa</button></article>
+      </div><div class="info-box top-margin"><strong>Privacy e salvataggio.</strong> I dati vengono memorizzati solo nel browser di questo dispositivo: non esiste sincronizzazione automatica tra telefoni o computer. Se cancelli i dati del browser o cambi dispositivo senza backup, potresti perderli. Per un uso aziendale condiviso è necessario collegare un database online.</div>
+      <div class="card setting-card top-margin"><h3>Prova con dati di esempio</h3><p>Inserisci alcuni prodotti dimostrativi per vedere come funziona l'app. Disponibile soltanto quando l'inventario è vuoto.</p><button class="btn btn-white" id="load-demo"><svg><use href="#i-plus"/></svg> Carica esempi</button></div>
+      </section>
+    </main>
+  </div>
+  <nav class="mobile-nav" aria-label="Navigazione mobile"><button class="active" data-page="dashboard"><svg><use href="#i-grid"/></svg>Inizio</button><button data-page="products"><svg><use href="#i-package"/></svg>Prodotti</button><button data-page="sales"><svg><use href="#i-coins"/></svg>Vendite</button><button data-page="movements"><svg><use href="#i-move"/></svg>Movimenti</button><button data-page="data"><svg><use href="#i-database"/></svg>Dati</button></nav>
+  <div class="dialog-backdrop" id="product-dialog" role="presentation"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="product-dialog-title"><div class="dialog-head"><div><div class="dialog-title" id="product-dialog-title">Nuovo prodotto</div><div class="dialog-subtitle">Compila i dettagli per aggiungerlo all'inventario</div></div><button type="button" class="btn btn-ghost btn-icon" data-close aria-label="Chiudi"><svg><use href="#i-x"/></svg></button></div><form id="product-form" style="display:flex;flex-direction:column;overflow:hidden" autocomplete="off"><div class="dialog-body"><div class="form-grid">
+    <div class="form-field full"><label for="p-name">Nome prodotto <span class="required">*</span></label><input id="p-name" required maxlength="120" placeholder="Es. Olio extravergine 5 L"></div>
+    <div class="form-field"><label for="p-sku">Codice / SKU</label><input id="p-sku" maxlength="70" placeholder="Es. OL-005"></div><div class="form-field"><label for="p-barcode">Codice a barre (EAN)</label><input id="p-barcode" maxlength="70" inputmode="numeric" placeholder="Facoltativo"></div>
+    <div class="form-field"><label for="p-category">Categoria</label><input id="p-category" list="category-options" maxlength="90" placeholder="Es. Alimentari"><datalist id="category-options"></datalist></div><div class="form-field"><label for="p-location">Posizione</label><input id="p-location" maxlength="90" placeholder="Es. Scaffale A3"></div>
+    <div class="form-field"><label for="p-unit">Unità di misura</label><select id="p-unit"><option value="pz">Pezzi (pz)</option><option value="kg">Chilogrammi (kg)</option><option value="g">Grammi (g)</option><option value="L">Litri (L)</option><option value="mL">Millilitri (mL)</option><option value="m">Metri (m)</option><option value="conf">Confezioni (conf)</option><option value="scat">Scatole (scat)</option></select></div>
+    <div class="form-field" id="p-initial-field"><label for="p-quantity">Quantità iniziale</label><input id="p-quantity" type="number" step="0.001" min="0" max="1000000000" value="0"><div class="field-hint">Per le variazioni successive usa Carico/Scarico.</div></div>
+    <div class="form-field full hidden" id="p-current-field"><label>Giacenza attuale</label><div class="movement-product-note" id="p-current">—</div><div class="field-hint">Per modificare la giacenza registra un movimento di magazzino.</div></div>
+    <div class="form-field"><label for="p-min">Scorta minima</label><input id="p-min" type="number" step="0.001" min="0" max="1000000000" value="0"></div>
+    <div class="form-field"><label for="p-price">Prezzo di vendita (€)</label><input id="p-price" type="number" min="0" max="1000000000" step="0.01" value="0"></div><div class="form-field full"><label for="p-notes">Note</label><textarea id="p-notes" maxlength="1000" placeholder="Descrizione, fornitore, dettagli aggiuntivi…"></textarea></div>
+  </div></div><div class="dialog-footer"><button type="button" class="btn btn-white" data-close>Annulla</button><button class="btn btn-primary" type="submit"><svg><use href="#i-check"/></svg> Salva prodotto</button></div></form></div></div>
+  <div class="dialog-backdrop" id="movement-dialog" role="presentation"><div class="dialog small" role="dialog" aria-modal="true" aria-labelledby="movement-dialog-title"><div class="dialog-head"><div><div class="dialog-title" id="movement-dialog-title">Nuovo movimento</div><div class="dialog-subtitle">Registra un carico, uno scarico o una rettifica</div></div><button class="btn btn-ghost btn-icon" type="button" data-close aria-label="Chiudi"><svg><use href="#i-x"/></svg></button></div><form id="movement-form" style="display:flex;flex-direction:column;overflow:hidden" autocomplete="off"><div class="dialog-body"><div class="form-field" style="margin-bottom:18px"><label for="m-product">Prodotto <span class="required">*</span></label><select id="m-product" required></select></div><div class="movement-product-note" id="m-current">Seleziona un prodotto.</div>
+    <div class="radio-card-row"><label class="radio-card"><input type="radio" name="movement-type" value="in" checked> Carico +</label><label class="radio-card"><input type="radio" name="movement-type" value="out"> Scarico −</label><label class="radio-card"><input type="radio" name="movement-type" value="adjustment"> Rettifica</label></div>
+    <div class="form-field" style="margin-bottom:18px"><label for="m-quantity" id="m-quantity-label">Quantità da caricare <span class="required">*</span></label><input type="number" id="m-quantity" min="0.001" step="0.001" required placeholder="Es. 10"><div class="field-hint" id="m-quantity-hint">Aggiunge unità alla giacenza attuale.</div></div><div class="form-field" style="margin-bottom:18px"><label for="m-date">Data e ora del movimento <span class="required">*</span></label><input type="datetime-local" id="m-date" required><div class="field-hint">Puoi registrare o correggere un movimento con una data precedente. Le giacenze successive vengono ricalcolate in ordine cronologico.</div></div><div class="form-field"><label for="m-note">Causale / nota (facoltativa)</label><textarea id="m-note" maxlength="300" placeholder="Es. Acquisto da fornitore"></textarea></div>
+  </div><div class="dialog-footer movement-footer"><button class="btn btn-danger hidden" id="m-delete" type="button">Elimina</button><button class="btn btn-white" type="button" data-close>Annulla</button><button class="btn btn-primary" type="submit" id="m-submit">Registra movimento</button></div></form></div></div>
+
+  <div class="dialog-backdrop" id="sale-dialog" role="presentation"><div class="dialog sale-dialog" role="dialog" aria-modal="true" aria-labelledby="sale-dialog-title">
+    <div class="dialog-head"><div><div class="dialog-title" id="sale-dialog-title">Registra vendita</div><div class="dialog-subtitle">Aggiungi prodotti, quantità e metodo di pagamento.</div></div><button type="button" class="btn btn-ghost btn-icon" data-close aria-label="Chiudi"><svg><use href="#i-x"/></svg></button></div>
+    <form id="sale-form" autocomplete="off" style="display:flex;flex-direction:column;overflow:hidden">
+      <div class="dialog-body sale-dialog-body">
+        <div class="form-grid" style="margin-bottom:18px"><div class="form-field"><label for="sale-date">Data e ora <span class="required">*</span></label><input id="sale-date" type="datetime-local" required></div><div class="form-field"><label for="sale-payment">Metodo di pagamento <span class="required">*</span></label><select id="sale-payment"><option value="cash">Contanti</option><option value="pos">POS</option><option value="mixed">Misto (contanti + POS)</option></select></div></div>
+        <div class="sale-items-title"><h3>Prodotti venduti</h3><button type="button" id="sale-add-line" class="btn btn-white btn-sm"><svg><use href="#i-plus"/></svg> Aggiungi prodotto</button></div>
+        <div id="sale-lines" class="sale-lines"></div>
+        <div class="sale-payment-box">
+          <div class="sale-subtotal"><span>Totale vendita</span><strong id="sale-calculated-total">0,00 €</strong></div>
+          <div id="sale-mixed-row" class="form-grid hidden" style="margin-top:13px"><div class="form-field"><label for="sale-cash-amount">Quota in contanti (€)</label><input type="number" min="0" step="0.01" id="sale-cash-amount" value="0"></div><div class="form-field"><label>Quota POS calcolata</label><div id="sale-pos-amount" class="sale-pos-readonly">0,00 €</div></div></div>
+        </div>
+        <div class="form-field" style="margin-top:18px"><label for="sale-note">Nota (facoltativa)</label><textarea id="sale-note" maxlength="300" placeholder="Es. Cliente, riferimento ordine, annotazioni…"></textarea></div>
+        <div class="field-hint" style="margin-top:10px">Il prezzo proposto è quello del listino, ma puoi modificarlo per questa vendita. Il prezzo storico resta invariato anche se aggiorni il listino.</div>
+      </div>
+      <div class="dialog-footer"><button type="button" class="btn btn-danger hidden" id="sale-delete">Elimina vendita</button><button type="button" class="btn btn-white" data-close>Annulla</button><button type="submit" class="btn btn-primary" id="sale-save">Salva vendita</button></div>
+    </form>
+  </div></div>
+  <div class="dialog-backdrop" id="print-dialog" role="presentation"><div class="dialog print-dialog" role="dialog" aria-modal="true" aria-labelledby="print-dialog-title">
+    <div class="dialog-head"><div><div class="dialog-title" id="print-dialog-title">Seleziona prodotti da stampare</div><div class="dialog-subtitle">Crea un listino prezzi oppure una stampa delle giacenze.</div></div><button type="button" class="btn btn-ghost btn-icon" data-close aria-label="Chiudi"><svg><use href="#i-x"/></svg></button></div>
+    <div class="dialog-body">
+      <div class="form-field" style="margin-bottom:14px"><label for="print-mode">Documento da stampare</label><select id="print-mode"><option value="pricelist">Listino prezzi — prezzo di vendita</option><option value="inventory">Inventario — solo prodotto e giacenza</option></select></div>
+      <label class="search print-search"><svg><use href="#i-search"/></svg><input id="print-search" type="search" placeholder="Cerca prodotti da includere…" aria-label="Cerca prodotti da stampare" autocomplete="off"></label>
+      <div class="print-select-actions"><span id="print-selected-count" aria-live="polite">0 prodotti selezionati</span><div class="print-select-buttons"><button class="btn btn-white btn-sm" type="button" id="print-select-all">Seleziona tutti</button><button class="btn btn-white btn-sm" type="button" id="print-select-none">Deseleziona tutti</button></div></div>
+      <div id="print-picker" class="print-picker" role="group" aria-label="Prodotti da stampare"></div>
+      <p class="field-hint" style="margin-top:12px">La ricerca serve solo per trovare i prodotti: quelli già selezionati rimangono selezionati anche se non visibili.</p>
+    </div>
+    <div class="dialog-footer"><button type="button" class="btn btn-white" data-close>Annulla</button><button type="button" class="btn btn-primary" id="print-selected"><svg><use href="#i-printer"/></svg> Stampa selezionati</button></div>
+  </div></div>
+  <div id="print-sheet" aria-hidden="true"></div>
+  <input type="file" id="csv-file" accept=".csv,text/csv,text/plain" hidden><input type="file" id="json-file" accept=".json,application/json" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+  (() => {
+    'use strict';
+    const STORAGE_KEY='scorta_inventory_v1';
+    const money=new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:2});
+    const num=new Intl.NumberFormat('it-IT',{maximumFractionDigits:3});
+    const dateFmt=new Intl.DateTimeFormat('it-IT',{dateStyle:'short',timeStyle:'short'});
+    const titles={sales:['Vendite','Cassa giornaliera','Registra le vendite, controlla contanti e POS e stampa il resoconto del giorno.'],dashboard:['Panoramica','Il tuo magazzino','Tieni sotto controllo prodotti, scorte e movimentazioni.'],products:['Prodotti','Catalogo prodotti','Cerca, modifica e gestisci tutte le referenze.'],movements:['Movimenti','Registro di magazzino','Controlla e correggi carichi, scarichi, rettifiche e relative date.'],data:['Dati e backup','Gestione dati','Esporta, importa e metti al sicuro il tuo inventario.']};
+    let state={products:[],movements:[],sales:[]},editId=null,editMovementId=null,editSaleId=null,saleDraft=[],saleOpenedAt=null,currentPage='dashboard',toastTimeout,printSelected=new Set();
+    const el=id=>document.getElementById(id);
+    const icon=id=>`<svg aria-hidden="true"><use href="#${id}"></use></svg>`;
+    const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const uid=()=>typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const cleanNum=(v,def=0)=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:def};
+    const round=n=>Math.round((n+Number.EPSILON)*1000)/1000;
+    const qty=p=>num.format(p.quantity)+' '+escapeHTML(p.unit);
+    function toast(message,error=false){const t=el('toast');t.textContent=message;t.className='toast show'+(error?' error':'');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.className='toast',4500)}
+    function load(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const parsed=JSON.parse(raw);if(parsed&&Array.isArray(parsed.products)&&Array.isArray(parsed.movements)){state={products:parsed.products.map(normalizeProduct),movements:parsed.movements.map(normalizeMovement),sales:Array.isArray(parsed.sales)?parsed.sales.map(normalizeSale):[]};}}catch(e){console.error(e);toast('Impossibile leggere i dati salvati. Esporta o verifica le impostazioni del browser.',true)}}
+    function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));return true}catch(e){console.error(e);toast('Memoria del browser non disponibile: i dati non sono stati salvati.',true);return false}}
+    function commit(next,success){const prev=state;state={...state,...next};if(!persist()){state=prev;render();return false}render();if(success)toast(success);return true}
+    function normalizeProduct(p){return {id:String(p.id||uid()),name:String(p.name||'Prodotto senza nome').slice(0,120),sku:String(p.sku||'').slice(0,70),barcode:String(p.barcode||'').slice(0,70),category:String(p.category||'Senza categoria').slice(0,90),location:String(p.location||'').slice(0,90),unit:String(p.unit||'pz').slice(0,15),quantity:round(cleanNum(p.quantity)),minQty:round(cleanNum(p.minQty)),price:cleanNum(p.price),notes:String(p.notes||'').slice(0,1000),createdAt:String(p.createdAt||new Date().toISOString()),updatedAt:String(p.updatedAt||new Date().toISOString())}}
+    function normalizeMovement(m){return {id:String(m.id||uid()),productId:String(m.productId||''),productName:String(m.productName||'Prodotto').slice(0,120),unit:String(m.unit||'pz').slice(0,15),type:['in','out','adjustment'].includes(m.type)?m.type:'adjustment',delta:Number.isFinite(Number(m.delta))?round(Number(m.delta)):0,before:round(cleanNum(m.before)),after:round(cleanNum(m.after)),note:String(m.note||'').slice(0,300),createdAt:String(m.createdAt||new Date().toISOString()),editedAt:m.editedAt?String(m.editedAt):'',saleId:String(m.saleId||''),saleLineId:String(m.saleLineId||'')}}
+    function normalizeSale(s){
+      const items=Array.isArray(s.items)?s.items.map(i=>({id:String(i.id||uid()),productId:String(i.productId||''),name:String(i.name||'Prodotto').slice(0,120),unit:String(i.unit||'pz').slice(0,15),quantity:round(cleanNum(i.quantity)),unitCents:Math.max(0,Math.round(cleanNum(i.unitCents))),totalCents:Math.max(0,Math.round(cleanNum(i.totalCents)))})):[];
+      const totalCents=items.reduce((sum,i)=>sum+i.totalCents,0);
+      const cashCents=Math.max(0,Math.min(totalCents,Math.round(cleanNum(s.cashCents))));
+      const posCents=totalCents-cashCents;
+      return {id:String(s.id||uid()),createdAt:String(s.createdAt||new Date().toISOString()),editedAt:String(s.editedAt||''),items,totalCents,cashCents,posCents,note:String(s.note||'').slice(0,300)};
+    }
+    function euros(cents){return money.format(cents/100)}
+    function dateOnly(iso){return localDateTime(iso).slice(0,10)}
+    function todayLocal(){return dateOnly(new Date().toISOString())}
+    function salesForDate(day){return state.sales.filter(s=>dateOnly(s.createdAt)===day).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))}
+    function aggregateSales(list){const grouped=new Map();for(const sale of list)for(const item of sale.items){const key=item.productId+'|'+item.unitCents+'|'+item.unit+'|'+item.name;const prior=grouped.get(key);if(prior){prior.quantity=round(prior.quantity+item.quantity);prior.totalCents+=item.totalCents}else grouped.set(key,{...item})}return [...grouped.values()].sort((a,b)=>a.name.localeCompare(b.name,'it')||a.unitCents-b.unitCents)}
+    function status(p){return p.quantity<=0?'out':p.minQty>0&&p.quantity<=p.minQty?'low':'ok'}
+    const statusLabel={out:'Esaurito',low:'Scorta bassa',ok:'Disponibile'};
+    function statusPill(p){const st=status(p);return `<span class="pill pill-${st}"><span class="dot"></span>${statusLabel[st]}</span>`}
+    function movementType(m){return m.type==='in'?'Carico':m.type==='out'?'Scarico':'Rettifica'}
+    function formatDate(d){const n=new Date(d);return Number.isNaN(n.getTime())?'—':dateFmt.format(n)}
+    function movementSort(a,b){return new Date(a.item.createdAt)-new Date(b.item.createdAt)||a.index-b.index}
+    function sortedMovements(){return state.movements.map((item,index)=>({item,index})).sort((a,b)=>new Date(b.item.createdAt)-new Date(a.item.createdAt)||b.index-a.index).map(x=>x.item)}
+    function localDateTime(iso){const d=new Date(iso);if(Number.isNaN(d.getTime()))return '';const pad=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`}
+    function parseDateTime(input){if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(input))throw Error('Inserisci una data e ora valide.');const d=new Date(input);if(Number.isNaN(d.getTime())||localDateTime(d.toISOString())!==input)throw Error('La data e ora inserite non sono valide.');return d.toISOString()}
+    // Ricalcola la sequenza temporale, partendo dalla giacenza antecedente al primo movimento storico.
+    // I movimenti di rettifica fissano la giacenza assoluta e possono quindi cambiare i delta successivi.
+    function replayStock(nextMovements,affected){
+      const updatedProducts=state.products.map(p=>({...p}));
+      const byId=new Map(updatedProducts.map(p=>[p.id,p]));
+      const revised=nextMovements.map(m=>({...m}));
+      const revisedIndex=new Map(revised.map((m,i)=>[m.id,i]));
+      for(const id of new Set(affected)){
+        const p=byId.get(id);
+        if(!p)throw Error('Impossibile modificare movimenti di un prodotto eliminato.');
+        const old=state.movements.map((item,index)=>({item,index})).filter(x=>x.item.productId===id).sort(movementSort);
+        let stock=old.length?round(old[0].item.before):round(p.quantity);
+        const timeline=revised.map((item,index)=>({item,index})).filter(x=>x.item.productId===id).sort(movementSort);
+        for(const {item} of timeline){
+          const amount=round(Math.abs(item.delta));
+          const after=round(item.type==='adjustment'?item.after:item.type==='in'?stock+amount:stock-amount);
+          if(!Number.isFinite(after)||after<0)throw Error(`Modifica non consentita: per «${p.name}» la giacenza diventerebbe negativa il ${formatDate(item.createdAt)}. Controlla date e quantità dei movimenti.`);
+          if(after>1e9)throw Error(`La giacenza di «${p.name}» supererebbe il limite consentito.`);
+          const target=revisedIndex.get(item.id);
+          revised[target]={...item,before:stock,after,delta:round(after-stock),productName:p.name,unit:p.unit};
+          stock=after;
+        }
+        p.quantity=stock;p.updatedAt=new Date().toISOString();
+      }
+      return {products:updatedProducts,movements:revised};
+    }
+    function go(page){if(!titles[page])return;currentPage=page;document.querySelectorAll('[data-page]').forEach(b=>{const active=b.dataset.page===page;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});document.querySelectorAll('.content-section').forEach(s=>s.classList.toggle('active',s.id==='section-'+page));const t=titles[page];el('page-title').textContent=t[0];el('page-eyebrow').textContent=t[1];el('page-desc').textContent=t[2];window.scrollTo({top:0,behavior:'instant'});render()}
+    function render(){renderDashboard();renderProducts();renderMovements();renderSales();el('load-demo').disabled=state.products.length>0}
+    function renderDashboard(){const products=state.products,low=products.filter(p=>status(p)!=='ok').sort((a,b)=>a.quantity-b.quantity);el('stat-products').textContent=num.format(products.length);el('stat-units').textContent=num.format(round(products.reduce((s,p)=>s+p.quantity,0)));el('stat-low').textContent=num.format(low.length);el('stat-value').textContent=money.format(products.reduce((s,p)=>s+p.quantity*p.price,0));el('stat-low-hint').textContent=low.length?`${low.length} referenze da verificare`:'Nessuna criticità';el('stat-low-hint').classList.toggle('danger',!!low.length);
+      el('dashboard-low').innerHTML=low.length?low.slice(0,6).map(p=>`<div class="stock-row"><div><div class="stock-name">${escapeHTML(p.name)}</div><div class="stock-meta">${escapeHTML(p.sku||p.category)} · Soglia ${num.format(p.minQty)} ${escapeHTML(p.unit)}</div></div><div class="stock-right"><div class="stock-count">${qty(p)}</div>${statusPill(p)}</div></div>`).join(''):`<div class="mini-empty">${icon('i-check')}<strong>Nessun prodotto critico</strong><div>Quando una scorta termina o raggiunge la soglia minima, comparirà qui.</div></div>`;
+      const todaySales=salesForDate(todayLocal()),todayTotal=todaySales.reduce((s,v)=>s+v.totalCents,0);el('today-revenue').textContent=euros(todayTotal);el('today-sales-count').textContent=todaySales.length+' '+(todaySales.length===1?'vendita':'vendite')+' registrate';el('today-cash').textContent=euros(todaySales.reduce((s,v)=>s+v.cashCents,0));el('today-pos').textContent=euros(todaySales.reduce((s,v)=>s+v.posCents,0));const recent=sortedMovements().slice(0,6);el('dashboard-movements').innerHTML=recent.length?recent.map(m=>`<div class="timeline-item"><div class="timeline-icon ${m.type==='in'?'':'out'} ${m.type==='adjustment'?'fix':''}">${icon(m.type==='in'?'i-arrow-down':m.type==='out'?'i-arrow-up':'i-edit')}</div><div class="timeline-main"><div class="timeline-title">${escapeHTML(m.productName)}</div><div class="timeline-meta">${m.saleId?'Vendita':movementType(m)} · ${formatDate(m.createdAt)}</div></div><div class="timeline-qty" style="color:${m.delta>=0?'#178564':'#d06050'}">${m.delta>0?'+':''}${num.format(m.delta)} ${escapeHTML(m.unit)}</div></div>`).join(''):`<div class="mini-empty">${icon('i-clock')}<strong>Nessun movimento</strong><div>I tuoi carichi e scarichi compariranno qui.</div></div>`}
+    function renderProducts(){const categories=[...new Set(state.products.map(p=>p.category))].sort((a,b)=>a.localeCompare(b,'it'));const sel=el('product-category'),old=sel.value;sel.innerHTML='<option value="all">Tutte le categorie</option>'+categories.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');sel.value=categories.includes(old)?old:'all';el('category-options').innerHTML=categories.map(c=>`<option value="${escapeHTML(c)}"></option>`).join('');
+      const query=el('product-search').value.trim().toLocaleLowerCase('it'),cat=sel.value,filter=el('product-status').value,sort=el('product-sort').value;let products=state.products.filter(p=>{const hay=[p.name,p.sku,p.barcode,p.category,p.location,p.notes].join(' ').toLocaleLowerCase('it');return(!query||hay.includes(query))&&(cat==='all'||p.category===cat)&&(filter==='all'||(filter==='low'?status(p)!=='ok':status(p)==='ok'))});products.sort((a,b)=>{if(sort==='qty-asc')return a.quantity-b.quantity;if(sort==='qty-desc')return b.quantity-a.quantity;if(sort==='value-desc')return b.price-a.price;if(sort==='recent')return new Date(b.updatedAt)-new Date(a.updatedAt);return a.name.localeCompare(b.name,'it')});
+      el('product-rows').innerHTML=products.map(p=>`<tr><td><div class="product-name">${escapeHTML(p.name)}</div><div class="product-sku">${escapeHTML(p.sku||p.barcode||'Senza codice')} ${p.location?' · '+escapeHTML(p.location):''}</div></td><td><span class="category-tag">${escapeHTML(p.category)}</span></td><td><span class="qty-number">${num.format(p.quantity)}</span> <span class="text-muted">${escapeHTML(p.unit)}</span></td><td>${statusPill(p)}</td><td><strong>${money.format(p.price)}</strong><div class="product-sku">per ${escapeHTML(p.unit)}</div></td><td><div class="actions"><button class="btn btn-white btn-sm" data-action="move" data-id="${escapeHTML(p.id)}" title="Carico o scarico">${icon('i-move')}<span>Movimento</span></button><button class="btn btn-white btn-icon btn-sm" data-action="edit" data-id="${escapeHTML(p.id)}" aria-label="Modifica ${escapeHTML(p.name)}">${icon('i-edit')}</button><button class="btn btn-danger btn-icon btn-sm" data-action="delete" data-id="${escapeHTML(p.id)}" aria-label="Elimina ${escapeHTML(p.name)}">${icon('i-trash')}</button></div></td></tr>`).join('');el('products-count').textContent=`${products.length} di ${state.products.length} prodotti`;
+      const empty=el('products-empty');empty.innerHTML=products.length?'':`<div class="empty"><div class="empty-illustration">${icon('i-package')}</div><div class="empty-title">${state.products.length?'Nessun risultato':'Il tuo inventario parte da qui'}</div><div class="empty-description">${state.products.length?'Prova a cambiare i filtri o il testo di ricerca.':'Aggiungi il primo prodotto e registra le quantità disponibili in magazzino.'}</div>${state.products.length?'':`<button class="btn btn-primary" id="empty-add">${icon('i-plus')} Aggiungi prodotto</button>`}</div>`;
+      el('product-rows').closest('table').classList.toggle('hidden',!products.length);el('products-empty').querySelector('#empty-add')?.addEventListener('click',()=>openProduct())}
+    function renderMovements(){const q=el('movement-search').value.toLocaleLowerCase('it'),type=el('movement-type').value;const movements=sortedMovements().filter(m=>(type==='all'||m.type===type)&&(!q||[m.productName,m.note,movementType(m)].join(' ').toLocaleLowerCase('it').includes(q)));el('movement-rows').innerHTML=movements.map(m=>`<tr><td class="text-muted" style="white-space:nowrap">${formatDate(m.createdAt)}</td><td><strong>${escapeHTML(m.productName)}</strong></td><td><span class="pill ${m.type==='in'?'pill-ok':m.type==='out'?'pill-low':'pill-neutral'}">${movementType(m)}</span></td><td><strong style="color:${m.delta>=0?'#178564':'#ce6155'}">${m.delta>0?'+':''}${num.format(m.delta)} ${escapeHTML(m.unit)}</strong></td><td>${num.format(m.after)} ${escapeHTML(m.unit)}</td><td class="text-muted" style="max-width:250px">${escapeHTML(m.note||'—')}${m.editedAt?'<div class="movement-edited">Modificato</div>':''}</td><td><div class="actions">${m.saleId?`<button class="btn btn-white btn-sm" data-action="view-sale" data-id="${escapeHTML(m.saleId)}">${icon('i-coins')} Vendita</button>`:`<button class="btn btn-white btn-sm" data-action="edit-movement" data-id="${escapeHTML(m.id)}" ${state.products.some(p=>p.id===m.productId)?'':'disabled title="Prodotto eliminato"'} aria-label="Modifica movimento ${escapeHTML(m.productName)}">${icon('i-edit')} Modifica</button>`}</div></td></tr>`).join('');el('movements-count').textContent=`${movements.length} di ${state.movements.length} movimenti`;el('movements-empty').innerHTML=movements.length?'':`<div class="empty"><div class="empty-illustration">${icon('i-move')}</div><div class="empty-title">${state.movements.length?'Nessun risultato':'Nessun movimento registrato'}</div><div class="empty-description">${state.movements.length?'Modifica i filtri per trovare il movimento.':'Registra un carico o uno scarico per aggiornare la disponibilità dei prodotti.'}</div></div>`;el('movement-rows').closest('table').classList.toggle('hidden',!movements.length)}
+    function modalOpen(id){el(id).classList.add('open');document.body.style.overflow='hidden';const first=el(id).querySelector('input:not([type=hidden]),select');if(first)requestAnimationFrame(()=>first.focus())}
+    function modalClose(id){el(id).classList.remove('open');if(!document.querySelector('.dialog-backdrop.open'))document.body.style.overflow=''}
+    function openProduct(id){const p=state.products.find(x=>x.id===id);editId=p?.id||null;el('product-form').reset();el('product-dialog-title').textContent=p?'Modifica prodotto':'Nuovo prodotto';el('p-initial-field').classList.toggle('hidden',!!p);el('p-current-field').classList.toggle('hidden',!p);el('p-name').value=p?.name||'';el('p-sku').value=p?.sku||'';el('p-barcode').value=p?.barcode||'';el('p-category').value=p?.category==='Senza categoria'?'':p?.category||'';el('p-location').value=p?.location||'';el('p-unit').value=p?.unit||'pz';el('p-quantity').value=p?.quantity??0;el('p-current').textContent=p?`${num.format(p.quantity)} ${p.unit}`:'';el('p-min').value=p?.minQty??0;el('p-price').value=p?.price??0;el('p-notes').value=p?.notes||'';modalOpen('product-dialog')}
+    function fieldNumber(id){const field=el(id),value=Number(field.value);if(field.value.trim()===''||!Number.isFinite(value)||value<0||value>1e9){field.focus();throw Error('Inserisci un numero valido e non negativo.')}return value}
+    function saveProduct(event){event.preventDefault();try{const name=el('p-name').value.trim(),sku=el('p-sku').value.trim(),barcode=el('p-barcode').value.trim();if(!name)throw Error('Inserisci il nome del prodotto.');if(sku&&state.products.some(p=>p.id!==editId&&p.sku.toLocaleLowerCase('it')===sku.toLocaleLowerCase('it')))throw Error('Questo codice SKU è già assegnato a un altro prodotto.');if(barcode&&state.products.some(p=>p.id!==editId&&p.barcode===barcode))throw Error('Questo codice a barre è già assegnato a un altro prodotto.');const existing=state.products.find(p=>p.id===editId),now=new Date().toISOString(),quantity=existing?existing.quantity:round(fieldNumber('p-quantity'));const p=normalizeProduct({id:existing?.id||uid(),name,sku,barcode,category:el('p-category').value.trim()||'Senza categoria',location:el('p-location').value.trim(),unit:el('p-unit').value,quantity,minQty:fieldNumber('p-min'),price:fieldNumber('p-price'),notes:el('p-notes').value.trim(),createdAt:existing?.createdAt||now,updatedAt:now});const products=existing?state.products.map(x=>x.id===p.id?p:x):[...state.products,p],movements=[...state.movements];if(!existing&&p.quantity>0)movements.push(normalizeMovement({id:uid(),productId:p.id,productName:p.name,unit:p.unit,type:'in',delta:p.quantity,before:0,after:p.quantity,note:'Giacenza iniziale',createdAt:now}));if(commit({products,movements},existing?'Prodotto aggiornato.':'Prodotto aggiunto.'))modalClose('product-dialog')}catch(e){toast(e.message,true)}}
+    function openMovement(productId,movementId=null){
+      const editing=movementId?state.movements.find(m=>m.id===movementId):null;
+      if(movementId&&!editing){toast('Movimento non trovato.',true);return}if(editing?.saleId){toast('Modifica gli scarichi delle vendite nella sezione Vendite.',true);go('sales');return}
+      if(!state.products.length){toast('Aggiungi prima un prodotto per registrare un movimento.',true);return}
+      if(editing&&!state.products.some(p=>p.id===editing.productId)){toast('Non puoi modificare un movimento collegato a un prodotto eliminato.',true);return}
+      editMovementId=editing?.id||null;
+      el('movement-form').reset();
+      el('movement-dialog-title').textContent=editing?'Modifica movimento':'Nuovo movimento';
+      el('m-submit').textContent=editing?'Salva modifiche':'Registra movimento';
+      el('m-delete').classList.toggle('hidden',!editing);
+      el('m-product').innerHTML=[...state.products].sort((a,b)=>a.name.localeCompare(b.name,'it')).map(p=>`<option value="${escapeHTML(p.id)}">${escapeHTML(p.name)}${p.sku?' ('+escapeHTML(p.sku)+')':''}</option>`).join('');
+      const id=editing?.productId||productId;
+      if(id&&state.products.some(p=>p.id===id))el('m-product').value=id;
+      if(editing){
+        document.querySelector(`input[name="movement-type"][value="${editing.type}"]`).checked=true;
+        el('m-quantity').value=editing.type==='adjustment'?editing.after:Math.abs(editing.delta);
+        el('m-note').value=editing.note;
+      }else{el('m-quantity').value=''}
+      el('m-date').value=localDateTime(editing?.createdAt||new Date().toISOString());
+      updateMovementForm();modalOpen('movement-dialog');
+    }
+    function updateMovementForm(){
+      const p=state.products.find(x=>x.id===el('m-product').value);
+      el('m-current').innerHTML=p?`Giacenza attuale: <strong>${num.format(p.quantity)} ${escapeHTML(p.unit)}</strong> · Soglia minima: ${num.format(p.minQty)} ${escapeHTML(p.unit)}`:'Seleziona un prodotto.';
+      const type=document.querySelector('input[name="movement-type"]:checked')?.value||'in';
+      el('m-quantity-label').innerHTML=type==='adjustment'?'Nuova giacenza <span class="required">*</span>':type==='in'?'Quantità da caricare <span class="required">*</span>':'Quantità da scaricare <span class="required">*</span>';
+      el('m-quantity-hint').textContent=type==='adjustment'?'Imposta la quantità effettivamente presente in magazzino alla data indicata.':type==='in'?'Aggiunge unità alla giacenza alla data indicata.':'Sottrae unità alla data indicata; la giacenza non può diventare negativa.';
+      el('m-quantity').min=type==='adjustment'?'0':'0.001';
+    }
+    function saveMovement(event){
+      event.preventDefault();
+      try{
+        const p=state.products.find(x=>x.id===el('m-product').value);
+        if(!p)throw Error('Seleziona un prodotto.');
+        const old=editMovementId?state.movements.find(m=>m.id===editMovementId):null;
+        if(editMovementId&&!old)throw Error('Movimento non trovato.');
+        const type=document.querySelector('input[name="movement-type"]:checked').value;
+        const n=round(fieldNumber('m-quantity'));
+        if(type!=='adjustment'&&n<=0)throw Error('La quantità deve essere maggiore di zero.');
+        const createdAt=old&&el('m-date').value===localDateTime(old.createdAt)?old.createdAt:parseDateTime(el('m-date').value),now=new Date().toISOString();
+        const m=normalizeMovement({id:old?.id||uid(),productId:p.id,productName:p.name,unit:p.unit,type,delta:type==='in'?n:type==='out'?-n:0,before:0,after:type==='adjustment'?n:0,note:el('m-note').value.trim(),createdAt,editedAt:old?now:''});
+        const next=old?state.movements.map(x=>x.id===old.id?m:x):[...state.movements,m];
+        const recalculated=replayStock(next,[p.id,...(old?[old.productId]:[])]);
+        if(commit(recalculated,old?'Movimento modificato; giacenze ricalcolate.':'Movimento registrato.')){modalClose('movement-dialog');editMovementId=null}
+      }catch(e){toast(e.message,true)}
+    }
+    function deleteMovement(){
+      const old=state.movements.find(m=>m.id===editMovementId);
+      if(!old)return;
+      if(!confirm(`Eliminare il movimento di «${old.productName}» del ${formatDate(old.createdAt)}?\n\nL'operazione ricalcola le giacenze successive e non può essere annullata senza un backup.`))return;
+      try{
+        const recalculated=replayStock(state.movements.filter(m=>m.id!==old.id),[old.productId]);
+        if(commit(recalculated,'Movimento eliminato; giacenze ricalcolate.')){modalClose('movement-dialog');editMovementId=null}
+      }catch(e){toast(e.message,true)}
+    }
+    function deleteProduct(id){const p=state.products.find(p=>p.id===id);if(!p)return;if(state.sales.some(v=>v.items.some(i=>i.productId===id))&&!confirm(`Questo prodotto compare in alcune vendite registrate. Eliminandolo, lo storico delle vendite rimarrà leggibile ma non potrai più correggere tali vendite. Vuoi continuare?`))return;if(!confirm(`Eliminare "${p.name}"?\n\nIl prodotto sarà rimosso dal catalogo, ma i suoi movimenti storici resteranno registrati.`))return;commit({...state,products:state.products.filter(x=>x.id!==id)},'Prodotto eliminato.')} 
+    const csvColumns=['sku','barcode','nome','categoria','posizione','unita','quantita','scorta_minima','prezzo_vendita','note'];
+    function csvCell(value){const s=String(value??'');return /[;"\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
+    function download(content,filename,mime){if(window.AndroidApp&&typeof window.AndroidApp.saveTextFile==='function'){window.AndroidApp.saveTextFile(filename,mime,content);return;}const blob=new Blob([content],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000)}
+    function dateTag(){return new Date().toLocaleDateString('sv-SE')}
+    function exportCSV(){const rows=[csvColumns,...state.products.map(p=>[p.sku,p.barcode,p.name,p.category,p.location,p.unit,p.quantity,p.minQty,p.price,p.notes])];download('\ufeff'+rows.map(r=>r.map(csvCell).join(';')).join('\r\n'),'scorta-inventario-'+dateTag()+'.csv','text/csv;charset=utf-8');toast('File CSV generato.')}
+    function exportJSON(){download(JSON.stringify({app:'Scorta',version:2,exportedAt:new Date().toISOString(),products:state.products,movements:state.movements,sales:state.sales},null,2),'scorta-backup-'+dateTag()+'.json','application/json;charset=utf-8');toast('Backup completo generato.')}
+    function parseCSV(text){text=text.replace(/^\ufeff/,'');const firstLine=text.split(/\r?\n/,1)[0];const delim=(firstLine.match(/;/g)||[]).length>=(firstLine.match(/,/g)||[]).length?';':',';const rows=[],row=[];let cell='',inside=false;for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'){if(inside&&text[i+1]==='"'){cell+='"';i++}else inside=!inside}else if(c===delim&&!inside){row.push(cell);cell=''}else if((c==='\n'||c==='\r')&&!inside){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push([...row]);row.length=0;cell=''}else cell+=c}if(inside)throw Error('CSV non valido: virgolette non chiuse.');row.push(cell);if(row.some(x=>x.trim()))rows.push(row);if(rows.length<2)throw Error('Il CSV non contiene prodotti.');return rows}
+    function parseNumericCell(value,def=0){const raw=String(value??'').trim();if(!raw)return def;let v=raw.replace(/\s/g,'');if(v.includes(',')&&v.includes('.'))v=v.lastIndexOf(',')>v.lastIndexOf('.')?v.replace(/\./g,'').replace(',','.'):v.replace(/,/g,'');else if(v.includes(','))v=v.replace(',','.');const n=Number(v);if(!Number.isFinite(n)||n<0||n>1e9)throw Error(`Valore numerico non valido: ${raw}`);return n}
+    function importCsv(text){const rows=parseCSV(text),normal=s=>String(s).trim().toLocaleLowerCase('it').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s-]+/g,'_'),header=rows[0].map(normal),idx=(...names)=>header.findIndex(h=>names.includes(h));const ni=idx('nome','name','prodotto','descrizione');if(ni<0)throw Error('CSV senza colonna "nome". Usa il modello esportato da Scorta.');const get=(row,...names)=>{const i=idx(...names);return i===-1?'':row[i]||''},now=new Date().toISOString(),products=[],movements=[],seenSku=new Set(),seenBarcode=new Set();for(let i=1;i<rows.length;i++){const r=rows[i],name=String(r[ni]||'').trim();if(!name)continue;const sku=get(r,'sku','codice','codice_prodotto').trim(),barcode=get(r,'barcode','ean','codice_a_barre').trim();if(sku&&seenSku.has(sku.toLocaleLowerCase('it')))throw Error(`Codice SKU duplicato nel CSV: ${sku}`);if(barcode&&seenBarcode.has(barcode))throw Error(`Codice a barre duplicato nel CSV: ${barcode}`);seenSku.add(sku.toLocaleLowerCase('it'));seenBarcode.add(barcode);const p=normalizeProduct({id:uid(),name,sku,barcode,category:get(r,'categoria','category'),location:get(r,'posizione','ubicazione','location'),unit:get(r,'unita','unita_di_misura','um')||'pz',quantity:parseNumericCell(get(r,'quantita','giacenza','quantity')),minQty:parseNumericCell(get(r,'scorta_minima','minimo','min_qty')),price:parseNumericCell(get(r,'prezzo_vendita','prezzo','price')),notes:get(r,'note','notes'),createdAt:now,updatedAt:now});products.push(p);if(p.quantity>0)movements.push(normalizeMovement({id:uid(),productId:p.id,productName:p.name,unit:p.unit,type:'in',delta:p.quantity,before:0,after:p.quantity,note:'Giacenza importata da CSV',createdAt:now}))}if(!products.length)throw Error('Nessun prodotto valido trovato nel CSV.');return {products,movements,sales:[]}}
+    function importJson(text){const data=JSON.parse(text);if(!data||!Array.isArray(data.products)||!Array.isArray(data.movements))throw Error('File JSON non compatibile con il backup di Scorta.');if(data.products.length>200000||data.movements.length>1000000)throw Error('Backup troppo grande.');const products=data.products.map(normalizeProduct),movements=data.movements.map(normalizeMovement),sales=Array.isArray(data.sales)?data.sales.map(normalizeSale):[];const ids=new Set(),skus=new Set();for(const p of products){if(ids.has(p.id))throw Error('Backup contiene ID prodotto duplicati.');ids.add(p.id);if(p.sku){const sku=p.sku.toLocaleLowerCase('it');if(skus.has(sku))throw Error('Backup contiene SKU duplicati.');skus.add(sku)}}return {products,movements,sales}}
+    async function readFile(file,kind){if(!file)return;try{if(file.size>35*1024*1024)throw Error('Il file supera i 35 MB.');const text=await file.text();const imported=kind==='csv'?importCsv(text):importJson(text);if(!confirm(`Importare ${imported.products.length} prodotti, ${imported.movements.length} movimenti e ${imported.sales.length} vendite?\n\nATTENZIONE: saranno SOSTITUITI anche tutte le vendite e gli incassi attuali. Prima di procedere, assicurati di aver salvato un backup.`))return;if(commit(imported,'Importazione completata.'))go('dashboard')}catch(e){console.error(e);toast('Importazione non riuscita: '+e.message,true)}}
+    function loadDemo(){if(state.products.length)return;const now=new Date().toISOString(),sample=[['OL-005','Olio extravergine 5 L','Alimentari','Scaffale A1','pz',18,5,65],['OL-001','Olio extravergine 1 L','Alimentari','Scaffale A2','pz',4,6,15],['IM-010','Imballaggi in cartone','Imballaggi','Scaffale B1','pz',38,10,1.2],['ET-100','Etichette adesive','Materiale','Scaffale C1','pz',0,20,0.25],['FL-020','Flaconi in vetro 250 mL','Imballaggi','Scaffale B2','pz',50,15,1.7]],products=sample.map(s=>normalizeProduct({id:uid(),sku:s[0],name:s[1],category:s[2],location:s[3],unit:s[4],quantity:s[5],minQty:s[6],price:s[7],createdAt:now,updatedAt:now}));const movements=products.filter(p=>p.quantity>0).map(p=>normalizeMovement({id:uid(),productId:p.id,productName:p.name,unit:p.unit,type:'in',delta:p.quantity,before:0,after:p.quantity,note:'Dati dimostrativi',createdAt:now}));if(commit({products,movements},'Dati dimostrativi caricati.'))go('dashboard')}
+
+    function renderSales(){
+      const day=el('sales-date-filter').value||todayLocal();
+      const sales=salesForDate(day);
+      const total=sales.reduce((sum,s)=>sum+s.totalCents,0),cash=sales.reduce((sum,s)=>sum+s.cashCents,0),pos=sales.reduce((sum,s)=>sum+s.posCents,0);
+      el('sales-total').textContent=euros(total);el('sales-cash').textContent=euros(cash);el('sales-pos').textContent=euros(pos);
+      el('sales-operations').textContent=`${sales.length} ${sales.length===1?'vendita registrata':'vendite registrate'}`;
+      const grouped=aggregateSales(sales);
+      el('sales-products-rows').innerHTML=grouped.map(i=>`<tr><td><div class="product-name">${escapeHTML(i.name)}</div></td><td>${num.format(i.quantity)} ${escapeHTML(i.unit)}</td><td>${euros(i.unitCents)}</td><td><strong>${euros(i.totalCents)}</strong></td></tr>`).join('');
+      el('sales-products-empty').textContent='Nessuna vendita registrata per questa data.';
+      el('sales-products-empty').classList.toggle('visible',!grouped.length);
+      el('sales-rows').innerHTML=sales.map(s=>{
+        const parts=s.items.map(i=>`${escapeHTML(i.name)} × ${num.format(i.quantity)}`).join(', ');
+        const payment=s.cashCents&&s.posCents?`Misto: ${euros(s.cashCents)} contanti + ${euros(s.posCents)} POS`:s.cashCents?'Contanti':'POS';
+        return `<tr><td class="text-muted" style="white-space:nowrap">${formatDate(s.createdAt)}</td><td><strong>${s.items.length} ${s.items.length===1?'prodotto':'prodotti'}</strong><div class="product-sku" style="max-width:330px">${parts}</div>${s.note?`<div class="product-sku">${escapeHTML(s.note)}</div>`:''}</td><td>${payment}</td><td><strong>${euros(s.totalCents)}</strong></td><td><div class="actions"><button class="btn btn-white btn-sm" type="button" data-sale-edit="${escapeHTML(s.id)}">${icon('i-edit')} Modifica</button></div></td></tr>`;
+      }).join('');
+      el('sales-empty').textContent='Nessuna vendita registrata in questa giornata. Puoi aggiungerne una con «Registra vendita».';
+      el('sales-empty').classList.toggle('visible',!sales.length);
+      el('sales-footer-count').textContent=`${sales.length} ${sales.length===1?'vendita':'vendite'}`;
+    }
+    function newSaleLine(existing=null){
+      if(!state.products.length){toast('Prima aggiungi un prodotto all’inventario.',true);return}
+      const p=state.products.find(p=>p.id===existing?.productId)||state.products[0];
+      saleDraft.push({id:existing?.id||uid(),productId:p.id,quantity:existing?.quantity??1,unitCents:existing?.unitCents??Math.round(p.price*100)});
+      renderSaleLines();
+    }
+    function saleLineOptions(selected){return [...state.products].sort((a,b)=>a.name.localeCompare(b.name,'it')).map(p=>`<option value="${escapeHTML(p.id)}" ${p.id===selected?'selected':''}>${escapeHTML(p.name)} (${num.format(p.quantity)} ${escapeHTML(p.unit)})</option>`).join('')}
+    function renderSaleLines(){
+      el('sale-lines').innerHTML=saleDraft.map((line,idx)=>{
+        const p=state.products.find(p=>p.id===line.productId);const totalCents=Math.round(line.unitCents*line.quantity);
+        return `<div class="sale-line" data-line-id="${escapeHTML(line.id)}">
+          <div class="form-field sale-line-product"><label>Prodotto</label><select data-sale-field="product">${saleLineOptions(line.productId)}</select><div class="sale-line-stock">${p?'Giacenza attuale: '+num.format(p.quantity)+' '+escapeHTML(p.unit):'Prodotto non disponibile'}</div></div>
+          <div class="form-field sale-line-qty"><label>Quantità</label><input type="number" min="0.001" max="1000000000" step="0.001" data-sale-field="quantity" value="${line.quantity}" required></div>
+          <div class="form-field sale-line-price"><label>Prezzo (€)</label><input type="number" min="0" max="1000000000" step="0.01" data-sale-field="price" value="${(line.unitCents/100).toFixed(2)}" required></div>
+          <div class="sale-line-total" data-sale-line-total="${escapeHTML(line.id)}">${euros(totalCents)}</div>
+          <button type="button" class="btn btn-danger btn-icon btn-sm sale-line-remove" aria-label="Rimuovi prodotto" data-sale-remove="${escapeHTML(line.id)}">${icon('i-x')}</button>
+        </div>`;
+      }).join('');
+      updateSaleTotal();
+    }
+    function updateSaleTotal(){
+      const total=saleDraft.reduce((sum,l)=>sum+Math.round(l.unitCents*l.quantity),0);
+      el('sale-calculated-total').textContent=euros(total);
+      const mixed=el('sale-payment').value==='mixed';el('sale-mixed-row').classList.toggle('hidden',!mixed);
+      const cashInput=el('sale-cash-amount');const cashVal=Number(cashInput.value);const cashCents=Number.isFinite(cashVal)?Math.round(cashVal*100):0;
+      el('sale-pos-amount').textContent=cashCents>=0&&cashCents<=total?euros(total-cashCents):'Importo non valido';
+      return total;
+    }
+    function openSale(id=null){
+      const existing=state.sales.find(s=>s.id===id);
+      if(id&&!existing){toast('Vendita non trovata.',true);return}
+      if(!state.products.length){toast('Aggiungi prima i prodotti da vendere.',true);go('products');return}
+      if(existing&&existing.items.some(i=>!state.products.some(p=>p.id===i.productId))){toast('La vendita contiene prodotti eliminati: non è modificabile.',true);return}
+      editSaleId=existing?.id||null;saleDraft=[];saleOpenedAt=existing?.createdAt||new Date().toISOString();
+      el('sale-form').reset();el('sale-dialog-title').textContent=existing?'Modifica vendita':'Registra vendita';
+      el('sale-save').textContent=existing?'Salva modifiche':'Salva vendita';el('sale-delete').classList.toggle('hidden',!existing);
+      el('sale-date').value=localDateTime(saleOpenedAt);
+      const type=existing?.cashCents&&existing?.posCents?'mixed':existing?.cashCents?'cash':'pos';
+      el('sale-payment').value=existing?type:'cash';el('sale-cash-amount').value=existing?(existing.cashCents/100).toFixed(2):'0';
+      el('sale-note').value=existing?.note||'';
+      if(existing)for(const item of existing.items)newSaleLine(item);else newSaleLine();
+      updateSaleTotal();modalOpen('sale-dialog');
+    }
+    function saleDraftInput(event){
+      const input=event.target,box=input.closest('[data-line-id]');if(!box)return;
+      const line=saleDraft.find(l=>l.id===box.dataset.lineId);if(!line)return;
+      const field=input.dataset.saleField;if(!field)return;
+      if(field==='product'){
+        const p=state.products.find(p=>p.id===input.value);if(!p)return;
+        line.productId=p.id;line.unitCents=Math.round(p.price*100);
+        box.querySelector('[data-sale-field="price"]').value=(line.unitCents/100).toFixed(2);
+        box.querySelector('.sale-line-stock').textContent=`Giacenza attuale: ${num.format(p.quantity)} ${p.unit}`;
+      }
+      if(field==='quantity')line.quantity=Number(input.value);
+      if(field==='price')line.unitCents=Math.round(Number(input.value)*100);
+      const amount=Number.isFinite(line.quantity)&&Number.isFinite(line.unitCents)?Math.round(line.quantity*line.unitCents):0;
+      box.querySelector('[data-sale-line-total]').textContent=euros(amount);
+      updateSaleTotal();
+    }
+    function saveSale(event){
+      event.preventDefault();
+      try{
+        const existing=editSaleId?state.sales.find(s=>s.id===editSaleId):null;
+        if(editSaleId&&!existing)throw Error('Vendita non trovata.');
+        if(!saleDraft.length)throw Error('Aggiungi almeno un prodotto alla vendita.');
+        const dt=el('sale-date').value,createdAt=dt===localDateTime(saleOpenedAt)?saleOpenedAt:parseDateTime(dt);
+        let totalCents=0;const items=[];
+        const soldByProduct=new Map();
+        for(const line of saleDraft){
+          const p=state.products.find(p=>p.id===line.productId);if(!p)throw Error('Uno dei prodotti non è più disponibile.');
+          if(!Number.isFinite(line.quantity)||line.quantity<=0||line.quantity>1e9||round(line.quantity)!==line.quantity)throw Error('Le quantità devono essere positive e avere al massimo tre decimali.');
+          if(!Number.isSafeInteger(line.unitCents)||line.unitCents<0||line.unitCents>1e11)throw Error('Prezzo vendita non valido.');
+          const lineCents=Math.round(line.quantity*line.unitCents);
+          if(!Number.isSafeInteger(lineCents))throw Error('Totale vendita troppo alto.');
+          items.push({id:line.id,productId:p.id,name:p.name,unit:p.unit,quantity:line.quantity,unitCents:line.unitCents,totalCents:lineCents});
+          totalCents+=lineCents;soldByProduct.set(p.id,round((soldByProduct.get(p.id)||0)+line.quantity));
+        }
+        if(!Number.isSafeInteger(totalCents))throw Error('Totale vendita troppo alto.');
+        const payment=el('sale-payment').value;let cashCents=payment==='cash'?totalCents:0;
+        if(payment==='mixed'){
+          const raw=el('sale-cash-amount').value;
+          if(!raw.trim()||!Number.isFinite(Number(raw))||Number(raw)<0||Math.round(Number(raw)*100)!==Number(raw)*100)throw Error('Inserisci un importo in contanti valido, con massimo due decimali.');
+          cashCents=Math.round(Number(raw)*100);
+          if(cashCents<=0||cashCents>=totalCents)throw Error('Per il pagamento misto, la quota contanti deve essere maggiore di zero e inferiore al totale.');
+        }
+        const sale=normalizeSale({id:existing?.id||uid(),items,cashCents,createdAt,note:el('sale-note').value.trim(),editedAt:existing?new Date().toISOString():''});
+        const oldLinked=existing?state.movements.filter(m=>m.saleId===existing.id):[];
+        if(existing&&oldLinked.length!==existing.items.length)throw Error('Il collegamento con lo storico di magazzino risulta incompleto. Ripristina un backup prima di modificare questa vendita.');
+        const remaining=state.movements.filter(m=>!existing||m.saleId!==existing.id);
+        const newMovements=items.map(i=>normalizeMovement({id:existing&&oldLinked.find(m=>m.saleLineId===i.id)?.id||uid(),saleId:sale.id,saleLineId:i.id,productId:i.productId,productName:i.name,unit:i.unit,type:'out',delta:-i.quantity,before:0,after:0,createdAt,note:'Vendita · '+(sale.note||'Incasso '+(payment==='cash'?'contanti':payment==='pos'?'POS':'misto'))}));
+        const affected=[...items.map(i=>i.productId),...oldLinked.map(m=>m.productId)];
+        const updated=replayStock([...remaining,...newMovements],affected);
+        const sales=existing?state.sales.map(s=>s.id===existing.id?sale:s):[...state.sales,sale];
+        if(commit({...updated,sales},existing?'Vendita modificata: inventario e incassi aggiornati.':'Vendita registrata: magazzino aggiornato.')){
+          modalClose('sale-dialog');editSaleId=null;el('sales-date-filter').value=dateOnly(createdAt);go('sales');
+        }
+      }catch(e){toast(e.message,true)}
+    }
+    function deleteSale(){
+      const sale=state.sales.find(s=>s.id===editSaleId);if(!sale)return;
+      if(!confirm(`Eliminare questa vendita del ${formatDate(sale.createdAt)} per ${euros(sale.totalCents)}?\n\nLa giacenza sarà ricalcolata e gli incassi del giorno diminuiranno.`))return;
+      try{
+        const linked=state.movements.filter(m=>m.saleId===sale.id);
+        if(linked.length!==sale.items.length)throw Error('Movimenti collegati incompleti: impossibile eliminare in sicurezza.');
+        const next=replayStock(state.movements.filter(m=>m.saleId!==sale.id),linked.map(m=>m.productId));
+        if(commit({...next,sales:state.sales.filter(s=>s.id!==sale.id)},'Vendita eliminata: giacenze e incassi aggiornati.')){modalClose('sale-dialog');editSaleId=null}
+      }catch(e){toast(e.message,true)}
+    }
+    function printDaySales(){
+      const day=el('sales-date-filter').value||todayLocal();const sales=salesForDate(day);
+      if(!sales.length){toast('Non ci sono vendite da stampare per questa giornata.',true);return}
+      const total=sales.reduce((sum,s)=>sum+s.totalCents,0),cash=sales.reduce((sum,s)=>sum+s.cashCents,0),pos=sales.reduce((sum,s)=>sum+s.posCents,0);
+      const niceDate=new Date(day+'T12:00:00').toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'});
+      // Il metodo di pagamento riguarda una vendita intera: non può essere attribuito
+      // a una riga aggregata per prodotto se lo stesso articolo è venduto con metodi diversi.
+      // Stampa quindi il dettaglio per vendita e mostra una sola volta il pagamento,
+      // anche quando la vendita contiene più prodotti.
+      const rows=[...sales].reverse().map((sale,index)=>{
+        const payment=sale.cashCents&&sale.posCents
+          ?`<strong>Misto</strong><div class="print-product-secondary">Contanti: ${euros(sale.cashCents)}<br>POS: ${euros(sale.posCents)}</div>`
+          :sale.cashCents?'<strong>Contanti</strong>':'<strong>POS</strong>';
+        const time=new Date(sale.createdAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+        return sale.items.map((item,itemIndex)=>`<tr>${itemIndex===0?`<td rowspan="${sale.items.length}" class="print-sale-meta"><strong>${time}</strong><div class="print-product-secondary">N. ${index+1}</div></td>`:''}<td><strong>${escapeHTML(item.name)}</strong></td><td>${num.format(item.quantity)} ${escapeHTML(item.unit)}</td><td>${euros(item.unitCents)}</td>${itemIndex===0?`<td rowspan="${sale.items.length}" class="print-sale-meta">${payment}</td>`:''}<td>${euros(item.totalCents)}</td></tr>`).join('');
+      }).join('');
+      el('print-sheet').innerHTML=`<div class="print-document-header"><div><h1>Vendite giornaliere</h1><p>Report del ${niceDate} · ${sales.length} ${sales.length===1?'vendita':'vendite'}</p></div><span class="print-document-date">Scorta · ${new Date().toLocaleDateString('it-IT')}</span></div><h2 class="print-section-title">Prodotti venduti e metodo di pagamento</h2><table class="print-document-table print-sales-detail"><thead><tr><th>Ora</th><th>Prodotto</th><th>Quantità</th><th>Prezzo unitario</th><th>Pagamento</th><th>Totale</th></tr></thead><tbody>${rows}<tr class="print-total-row"><td colspan="5">INCASSO TOTALE</td><td>${euros(total)}</td></tr></tbody></table><h2 class="print-section-title">Ripartizione pagamenti</h2><div class="print-payment-summary"><div class="print-payment-item"><span class="print-payment-label">CONTANTI</span><span class="print-payment-amount">${euros(cash)}</span></div><div class="print-payment-item"><span class="print-payment-label">POS</span><span class="print-payment-amount">${euros(pos)}</span></div><div class="print-payment-item"><span class="print-payment-label">TOTALE INCASSATO</span><span class="print-payment-amount">${euros(total)}</span></div></div><div class="print-document-footer">Il metodo di pagamento si riferisce all’intera vendita, anche quando comprende più prodotti. Riepilogo gestionale, non costituisce documento fiscale.</div>`;
+      document.body.classList.add('print-ready');if(window.AndroidApp&&typeof window.AndroidApp.printDocument==='function'){window.AndroidApp.printDocument();}else{window.print();}
+    }
+    function exportSalesCSV(){
+      const day=el('sales-date-filter').value||todayLocal();const sales=salesForDate(day);
+      if(!sales.length){toast('Nessuna vendita da esportare per la data selezionata.',true);return}
+      const rows=[['data_ora','prodotto','quantita','unita','prezzo_unitario','totale_riga','quota_contanti_riga','quota_pos_riga','id_vendita']];
+      for(const sale of sales){
+        let cashDistributed=0;
+        sale.items.forEach((item,index)=>{
+          const last=index===sale.items.length-1;
+          const lineCash=last?sale.cashCents-cashDistributed:sale.totalCents?Math.floor(sale.cashCents*item.totalCents/sale.totalCents):0;
+          cashDistributed+=lineCash;
+          const linePos=item.totalCents-lineCash;
+          rows.push([formatDate(sale.createdAt),item.name,item.quantity,item.unit,(item.unitCents/100).toFixed(2),(item.totalCents/100).toFixed(2),(lineCash/100).toFixed(2),(linePos/100).toFixed(2),sale.id]);
+        });
+      }
+      download('\ufeff'+rows.map(r=>r.map(csvCell).join(';')).join('\r\n'),`scorta-vendite-${day}.csv`,'text/csv;charset=utf-8');
+      toast('CSV delle vendite generato. Le quote contanti/POS sono ripartite sulle righe; i totali coincidono con la chiusura.');
+    }
+    function openPrintDialog(){
+      if(!state.products.length){toast('Aggiungi almeno un prodotto prima di stampare.',true);return}
+      printSelected=new Set(state.products.map(p=>p.id));
+      el('print-search').value='';el('print-mode').value='pricelist';
+      renderPrintPicker();modalOpen('print-dialog');
+    }
+    function renderPrintPicker(){
+      const q=el('print-search').value.trim().toLocaleLowerCase('it');
+      const products=[...state.products].filter(p=>[p.name,p.sku,p.barcode,p.category].join(' ').toLocaleLowerCase('it').includes(q)).sort((a,b)=>a.name.localeCompare(b.name,'it'));
+      el('print-picker').innerHTML=products.length?products.map(p=>`<label class="print-option"><input type="checkbox" data-print-id="${escapeHTML(p.id)}" ${printSelected.has(p.id)?'checked':''} aria-label="Includi ${escapeHTML(p.name)}"><span class="print-option-content"><span class="print-option-name">${escapeHTML(p.name)}</span><span class="print-option-meta" style="display:block">${escapeHTML(p.category)}${p.sku?' · '+escapeHTML(p.sku):''}</span></span><span class="print-option-price">${money.format(p.price)}</span></label>`).join(''):'<div class="print-option-empty">Nessun prodotto trovato.</div>';
+      el('print-selected-count').textContent=`${printSelected.size} di ${state.products.length} selezionati`;
+      el('print-selected').disabled=printSelected.size===0;
+    }
+    function printChosenProducts(){
+      const chosen=state.products.filter(p=>printSelected.has(p.id)).sort((a,b)=>a.category.localeCompare(b.category,'it')||a.name.localeCompare(b.name,'it'));
+      if(!chosen.length){toast('Seleziona almeno un prodotto da stampare.',true);return}
+      const isList=el('print-mode').value==='pricelist';
+      const title=isList?'Listino prezzi':'Inventario prodotti';
+      const d=new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'});
+      // Nell'inventario stampato compaiono solo le colonne Prodotto e Giacenza.
+      // Il listino conserva le colonne e i prezzi previsti dalla versione precedente.
+      const headers=isList?'<th>Prodotto</th><th>Categoria</th><th>Prezzo vendita</th>':'<th>Prodotto</th><th>Giacenza</th>';
+      const rows=chosen.map(p=>isList
+        ?`<tr><td><strong>${escapeHTML(p.name)}</strong><div class="print-product-secondary">${escapeHTML(p.sku||p.barcode||'')} · Unità: ${escapeHTML(p.unit)}</div></td><td>${escapeHTML(p.category)}</td><td><strong>${money.format(p.price)}</strong>${p.unit!=='pz'?`<div class="print-product-secondary">per ${escapeHTML(p.unit)}</div>`:''}</td></tr>`
+        :`<tr><td><strong>${escapeHTML(p.name)}</strong></td><td>${num.format(p.quantity)} ${escapeHTML(p.unit)}</td></tr>`
+      ).join('');
+      el('print-sheet').innerHTML=`<div class="print-document-header"><div><h1>${title}</h1><p>${chosen.length} ${chosen.length===1?'prodotto selezionato':'prodotti selezionati'}</p></div><span class="print-document-date">${d}</span></div><table class="print-document-table"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table><div class="print-document-footer">${isList?'Prezzi espressi in euro (€). Disponibilità da verificare al momento dell’ordine.':'Giacenze al momento della stampa.'}</div>`;
+      document.body.classList.add('print-ready');
+      modalClose('print-dialog');
+      if(window.AndroidApp&&typeof window.AndroidApp.printDocument==='function'){window.AndroidApp.printDocument();}else{window.print();}
+    }
+    window.addEventListener('afterprint',()=>document.body.classList.remove('print-ready'));
+    document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+    el('header-sale').addEventListener('click',()=>openSale());el('header-add').addEventListener('click',()=>openProduct());el('header-movement').addEventListener('click',()=>openMovement());el('product-form').addEventListener('submit',saveProduct);el('movement-form').addEventListener('submit',saveMovement);
+    el('m-delete').addEventListener('click',deleteMovement);el('movement-rows').addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b)return;if(b.dataset.action==='view-sale'){go('sales');openSale(b.dataset.id)}else if(!b.disabled)openMovement(null,b.dataset.id)});el('m-product').addEventListener('change',updateMovementForm);document.querySelectorAll('input[name="movement-type"]').forEach(r=>r.addEventListener('change',updateMovementForm));
+    document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>modalClose(b.closest('.dialog-backdrop').id)));document.querySelectorAll('.dialog-backdrop').forEach(d=>d.addEventListener('mousedown',e=>{if(e.target===d)modalClose(d.id)}));document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.dialog-backdrop.open').forEach(d=>modalClose(d.id))});
+    el('product-rows').addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b)return;const{id,action}=b.dataset;if(action==='move')openMovement(id);if(action==='edit')openProduct(id);if(action==='delete')deleteProduct(id)});
+    ['product-search','product-category','product-status','product-sort'].forEach(id=>el(id).addEventListener(id==='product-search'?'input':'change',renderProducts));['movement-search','movement-type'].forEach(id=>el(id).addEventListener(id==='movement-search'?'input':'change',renderMovements));
+    el('view-low').addEventListener('click',()=>{el('product-status').value='low';go('products')});el('view-movements').addEventListener('click',()=>go('movements'));
+    el('export-csv').addEventListener('click',exportCSV);el('export-json').addEventListener('click',exportJSON);el('import-csv-button').addEventListener('click',()=>el('csv-file').click());el('import-json-button').addEventListener('click',()=>el('json-file').click());el('csv-file').addEventListener('change',async e=>{await readFile(e.target.files[0],'csv');e.target.value=''});el('json-file').addEventListener('change',async e=>{await readFile(e.target.files[0],'json');e.target.value=''});el('print-inventory').addEventListener('click',openPrintDialog);el('print-products').addEventListener('click',openPrintDialog);el('print-search').addEventListener('input',renderPrintPicker);el('print-select-all').addEventListener('click',()=>{printSelected=new Set(state.products.map(p=>p.id));renderPrintPicker()});el('print-select-none').addEventListener('click',()=>{printSelected.clear();renderPrintPicker()});el('print-picker').addEventListener('change',e=>{const t=e.target.closest('[data-print-id]');if(!t)return;if(t.checked)printSelected.add(t.dataset.printId);else printSelected.delete(t.dataset.printId);renderPrintPicker()});el('print-selected').addEventListener('click',printChosenProducts);
+    el('sales-date-filter').value=todayLocal();
+    el('sales-date-filter').addEventListener('change',renderSales);
+    el('sales-today').addEventListener('click',()=>{el('sales-date-filter').value=todayLocal();renderSales()});
+    el('sales-add').addEventListener('click',()=>openSale());
+    el('today-sale-open').addEventListener('click',()=>{el('sales-date-filter').value=todayLocal();go('sales')});
+    el('sales-rows').addEventListener('click',e=>{const b=e.target.closest('[data-sale-edit]');if(b)openSale(b.dataset.saleEdit)});
+    el('sales-print').addEventListener('click',printDaySales);
+    el('sales-export').addEventListener('click',exportSalesCSV);
+    el('sale-add-line').addEventListener('click',()=>newSaleLine());
+    el('sale-form').addEventListener('submit',saveSale);
+    el('sale-delete').addEventListener('click',deleteSale);
+    el('sale-payment').addEventListener('change',updateSaleTotal);
+    el('sale-cash-amount').addEventListener('input',updateSaleTotal);
+    el('sale-lines').addEventListener('input',saleDraftInput);
+    el('sale-lines').addEventListener('change',saleDraftInput);
+    el('sale-lines').addEventListener('click',e=>{const b=e.target.closest('[data-sale-remove]');if(!b)return;saleDraft=saleDraft.filter(l=>l.id!==b.dataset.saleRemove);renderSaleLines()});
+    el('load-demo').addEventListener('click',loadDemo);
+    load();render();
+    if(!window.AndroidApp&&location.protocol==='https:'&&'serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
+  })();
+  </script>
+</body>
+</html>

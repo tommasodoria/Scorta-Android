@@ -1,0 +1,3 @@
+Build project: Android Gradle Plugin 8.6.1; Gradle 8.7; JDK 17; compile SDK 35.
+Gradle wrapper binaries are not bundled. Use Android Studio's Gradle settings,
+or the included GitHub Actions workflow which installs Gradle 8.7 automatically.
